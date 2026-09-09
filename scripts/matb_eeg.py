@@ -1,7 +1,8 @@
 """PRIMARY dataset Checkpoint 2: concurrent EEG for a small matched cohort, one participant at a time.
 
 Input: EEGfNIRSeye_*/pXX/pXX.csv (channels as rows, ~600 MB, 250 Hz). Documented 1-based rows: time 1; fNIRS 2-33;
-EEG 34-65 (32 channels in the order of EEG_32_Channel_mapping.xyz); pupil/gaze 66-73; event markers 74.
+EEG 34-65 (32 channels in the order of EEG_32_Channel_mapping.xyz); pupil/gaze 66-73; event markers 74. Files of
+participants whose Tobii data were recorded separately have 66 rows with the markers in row 66 (verified on p28).
 Only the needed rows are streamed (myndos.io_matb.stream_combined_csv_rows); no wide DataFrame is built.
 
 Chronology (frozen): the EEG stream has its own clock. Its working-start marker is the EARLIEST marker followed by markers at
@@ -82,8 +83,19 @@ def process(pid: str) -> dict:
     want = [COMBINED_ROWS["time"]] + COMBINED_ROWS["eeg"] + COMBINED_ROWS["eye"] + [COMBINED_ROWS["marker"]]
     rows = stream_combined_csv_rows(path, want)
     a["n_rows_read"] = len(rows); a["rows_missing"] = [r for r in want if r not in rows]
-    if any(r not in rows for r in [COMBINED_ROWS["time"], COMBINED_ROWS["marker"]] + COMBINED_ROWS["eeg"]):
+    # Two released layouts: 74 rows (eye rows 66-73, markers 74; p01-p24 with synchronous eye tracking) or 66 rows
+    # (no eye rows, markers in row 66; participants whose Tobii data were recorded separately, per their Note.txt).
+    if COMBINED_ROWS["marker"] in rows:
+        a["layout"] = "74-row (eye rows 66-73, markers row 74)"; marker_row = COMBINED_ROWS["marker"]; eye_row_ids = COMBINED_ROWS["eye"]
+    elif 66 in rows and all(r not in rows for r in range(67, 75)):
+        a["layout"] = "66-row (no eye rows, markers row 66)"; marker_row = 66; eye_row_ids = []
+    else:
+        a["status"] = f"unrecognised layout: rows present {sorted(rows)}"; return a
+    if any(r not in rows for r in [COMBINED_ROWS["time"]] + COMBINED_ROWS["eeg"]):
         a["status"] = f"required rows missing: {a['rows_missing']}"; return a
+    mkv = rows[marker_row]; a["marker_row_is_binary"] = bool(np.all(np.isin(np.unique(mkv[np.isfinite(mkv)]), [0.0, 1.0])))
+    if not a["marker_row_is_binary"]:
+        a["status"] = f"marker row {marker_row} is not a 0/1 event row"; return a
     t = rows[COMBINED_ROWS["time"]]; n = t.size
     a["n_samples"] = int(n); a["lengths_equal"] = all(rows[r].size == n for r in rows)
     dt = np.diff(t); a["fs"] = float(1 / np.median(dt)); a["time_monotonic"] = bool(np.all(dt > 0)); a["max_time_gap_s"] = float(dt.max()); a["span_s"] = float(t[-1] - t[0])
@@ -108,13 +120,13 @@ def process(pid: str) -> dict:
     if keep.sum() < 8 or any(len(groups_all[g]) == 0 for g in ("frontal", "central", "parietal")):
         a["status"] = f"EEG unusable: {int(keep.sum())} retained channels, groups {list(groups_all)}"
     # plausibility of the channel order: alpha power should be larger over parietal/occipital than frontal in most people
-    eye_rows = [rows[r] for r in COMBINED_ROWS["eye"] if r in rows]
+    eye_rows = [rows[r] for r in eye_row_ids if r in rows]
     if eye_rows:
         eye = np.vstack(eye_rows); a["eye_rows_nonconstant"] = int((np.nanstd(eye, axis=1) > 0).sum())
         a["eye_row_ranges"] = [[float(np.nanmin(e)), float(np.nanmax(e))] for e in eye]
     else:
         a["eye_rows_nonconstant"] = 0; a["eye_row_ranges"] = []
-    mk = rows[COMBINED_ROWS["marker"]]; idx = np.flatnonzero(mk != 0)
+    mk = rows[marker_row]; idx = np.flatnonzero(mk != 0)
     if a.get("status", "").startswith("EEG unusable"):
         return a
     # collapse runs of consecutive nonzero samples into single events (marker value = first sample of the run)
