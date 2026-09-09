@@ -1,0 +1,44 @@
+{
+  "handcrafted_bandpower_12": {
+    "pooled_auc": 0.7138859817431247,
+    "participant_mean_auc": 0.8567197712418301,
+    "n_windows": 853,
+    "n_participants": 36
+  },
+  "biot_pretrained_frozen_256": {
+    "pooled_auc": 0.645589859875574,
+    "participant_mean_auc": 0.7109696502057612,
+    "n_windows": 853,
+    "n_participants": 36
+  },
+  "biot_random_weights_256": {
+    "pooled_auc": 0.668483632769347,
+    "participant_mean_auc": 0.7464143064633262,
+    "n_windows": 853,
+    "n_participants": 36
+  },
+  "handcrafted_plus_biot_pretrained": {
+    "pooled_auc": 0.6779173207744636,
+    "participant_mean_auc": 0.7600308641975307,
+    "n_windows": 853,
+    "n_participants": 36
+  },
+  "paired_participant_auc_diff_pretrained_minus_handcrafted": {
+    "mean": -0.14575012103606877,
+    "ci_low": -0.2547625801863955,
+    "ci_high": -0.0457779215081095,
+    "n": 36,
+    "frac_boot_below_zero": 0.9988
+  },
+  "paired_participant_auc_diff_pretrained_minus_random": {
+    "mean": -0.03544465625756475,
+    "ci_low": -0.15847252481239413,
+    "ci_high": 0.08724175820019364,
+    "n": 36,
+    "frac_boot_below_zero": 0.7128
+  },
+  "note": "EEGMAT baseline-vs-task from 10-s windows; logistic regression C=0.1 (fixed, not tuned) on standardized features; participant-grouped 12-fold; encoder frozen; EEG-PREST-16 checkpoint (MIT) with assumed TUAB-style 95th-percentile scaling.",
+  "versions": {
+    "torch": "2.14.0+cu130"
+  }
+}

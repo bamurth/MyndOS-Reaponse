@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-09-09 20:45 UTC (checkpoint 2: ds007554 descriptives + prediction test, four figures, RESULTS.md)
+Updated: 2026-09-09 21:15 UTC (checkpoint 3, final for tonight: BIOT audit run; all deliverables except the blocked primary dataset)
 
 ## Environment
 - Claude Code cloud session, 4 vCPU, 15 GB RAM, 30 GB writable disk, CPU only.
@@ -47,5 +47,14 @@ RESULTS.md is attributed to the primary dataset.
 - [x] 3. ds007554 cohort features and descriptives (515 files / 30 participants; results/tables/ds007554_*.{csv,json})
 - [x] 4. Held-out prediction test run with controls on the event-matched cohort: 15 participants → labelled insufficient-N/exploratory; physiology added nothing beyond past performance
 - [x] 5. Figures (results/figures/fig1-4, figE1), 9 tests passing, RESULTS.md, MANIFEST.md
-- [ ] 6. Optional BIOT frozen-encoder audit: checkpoint fetched (MIT); torch install from PyPI attempted under the 30-min cap (see below)
+- [x] 6. Optional BIOT frozen-encoder audit run on EEGMAT (results/tables/biot_frozen_eegmat.json): pretrained frozen embeddings worse than handcrafted band power and not better than random weights
 - [ ] 7. PRIMARY MATB-II: waiting on physionet.org network access; scripts/matb_pipeline.py ready but untested on real data
+
+## Final state (21:15 UTC)
+- Deliverables present: PLAN.md, README.md, RESULTS.md, MANIFEST.md, requirements.lock.txt, `scripts/run_all.sh`, 9 passing tests,
+  audits in results/audit/, participant/file metrics and JSON summaries in results/tables/, five figures in results/figures/.
+- Usable N: EEGMAT 36 (32 cardiac); ds007554 30 (EEG-clock descriptives), 15 (cardiac+behaviour, event-matched), prediction test insufficient-N.
+- Not delivered: anything from the primary MATB-II dataset (network policy). Recovery dynamics were not measurable on the reachable datasets.
+- Disk: ~6 GB venv (torch), 3.5 GB raw data; 18 GB free. No pre-existing files deleted.
+- To resume: allow physionet.org in the environment network settings, then `scripts/matb_pipeline.py` (after inspecting the MATB-II performance
+  file format, which is unverified) and re-run `scripts/run_all.sh`.

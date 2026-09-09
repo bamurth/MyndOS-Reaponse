@@ -13,7 +13,7 @@ Seeds = 0. Frozen parameters as in PLAN.md (10-s bins, ±2 robust-unit band with
 | 2 | ds007554 / CMx7-MM (OpenNeuro) | Real concurrent EEG+ECG+behaviour, 25-s rest → 3-min task; **no recovery period**; cross-device clock unverified except where event-matched |
 | 3 | ds007554 | Held-out added-value prediction test: **insufficient-N (15 < 20), exploratory** |
 | 4 | — | Primary MATB-II response–recovery: **not run** (blocked) |
-| 5 | — | Foundation-model encoder (BIOT): **audited, not run** |
+| 5 | EEGMAT | Foundation-model encoder audit (BIOT frozen): **run**, negative vs handcrafted features |
 | Tests | synthetic | Software checks only, never evidence about people |
 
 ## 1. EEGMAT: EEG + ECG before and during mental arithmetic (N = 36)
@@ -116,11 +116,25 @@ AWS Open Data mirror (all 253 mirrored prefixes enumerated). `scripts/matb_pipel
 censoring) against the published E4 format, exits when data are absent, and is untested on real primary files. The four MATB figures and the
 20-participant prediction test remain to be produced once `physionet.org` is allowed in the environment's network settings.
 
-## 5. Foundation-model encoder — AUDITED, NOT RUN
-BIOT (github.com/ycq091044/BIOT, MIT): `EEG-PREST-16-channels.ckpt` (13,791,969 B) is reachable and its 16 bipolar montages are derivable from
-EEGMAT's 19 monopolar channels (`myndos.encoder.bipolar_montage`). Requirements not met tonight: a CPU-only torch wheel is unreachable
-(download.pytorch.org blocked); see STATUS.md for the outcome of the PyPI attempt. No embedding, no comparison with handcrafted features, no
-random-weight branch was produced. Ridge/PCA/handcrafted features are not a foundation model.
+## 5. Foundation-model encoder — BIOT frozen-embedding audit RUN (EEGMAT only)
+Released BIOT checkpoint `EEG-PREST-16-channels.ckpt` (github.com/ycq091044/BIOT, MIT; sha256 40f55f5d23e8…2ad70; 57/57 state-dict keys matched
+strictly). Inputs follow the repo's own contract: 16 bipolar 10-20 montages derived from EEGMAT's monopolar channels (T3/T4/T5/T6 → T7/T8/P7/P8),
+0.5–40 Hz + 50-Hz notch, resampled 500 → 200 Hz, 10-s windows (2000 samples), per-window 95th-percentile amplitude scaling as in the repo's TUAB
+loader, mean-pooled 256-d embedding, encoder frozen. Same 853 windows and participant-grouped 12 folds as Section 1; logistic regression C = 0.1
+(fixed). Script: `scripts/biot_frozen_eegmat.py`; output: `results/tables/biot_frozen_eegmat.json`. torch 2.14.0 (CPU execution).
+
+| Representation | pooled AUC | mean within-participant AUC |
+|---|---|---|
+| handcrafted band power (12 features) | 0.714 | 0.857 |
+| BIOT pretrained, frozen (256-d) | 0.646 | 0.711 |
+| BIOT random weights, frozen (256-d) | 0.668 | 0.746 |
+| handcrafted + BIOT pretrained | 0.678 | 0.760 |
+
+Paired participant-level AUC difference, pretrained BIOT minus handcrafted: **−0.146** [−0.255, −0.046]; pretrained minus random weights:
+−0.035 [−0.158, +0.087]. **On this task the frozen pretrained encoder is worse than 12 hand-designed features and no better than its own
+random-weight control.** Likely reasons (untested): domain shift from clinical/resting montage data to ICA-cleaned 30-Hz-low-passed EEG, no
+fine-tuning, and a linear probe on 36 people. This is an encoder audit, not evidence about foundation models in general; nothing here was
+trained tonight, and ridge/PCA/handcrafted features remain non-foundation baselines.
 
 ## 6. Software tests
 9 synthetic tests pass (`.venv/bin/python -m pytest`): R-peak recovery and polarity, HRV requires beat coverage, bins never cross boundaries,
