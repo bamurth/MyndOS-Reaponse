@@ -58,3 +58,22 @@ def test_zero_mad_flag_blocks_normalization():
     assert flag and np.isnan(sc)
     assert np.isnan(normalize(np.array([1.0, 5.0]), med, sc)).all()
     assert np.isnan(first_sustained_departure(normalize(np.array([9.0] * 5), med, sc), np.arange(5.0)))
+
+
+def test_eeg_working_start_from_markers():
+    import sys; sys.path.insert(0, "scripts")
+    from matb_eeg import find_working_start
+    mt = np.array([5.0, 65.0, 425.5, 785.0, 1144.0, 1505.0, 1865.0])  # rest, working start, 4 transitions (+/- few s), end
+    i, devs, cands = find_working_start(mt)
+    assert i == 1 and np.allclose(devs, [0.5, 0.0, -1.0, 0.0]) and len(cands) == 2  # the +360 marker also chains to the end marker
+    # a missing transition marker makes the anchor ambiguous (no candidate)
+    i2, d2, c2 = find_working_start(np.array([5.0, 65.0, 425.0, 1145.0, 1505.0]))
+    assert i2 is None and len(c2) == 0
+
+
+def test_combined_csv_row_streaming_skips_unwanted_rows(tmp_path):
+    from myndos.io_matb import stream_combined_csv_rows, COMBINED_ROWS
+    p = tmp_path / "c.csv"; p.write_text("\n".join(",".join(str(r * 10 + k) for k in range(4)) for r in range(80)) + "\n")
+    rows = stream_combined_csv_rows(str(p), [COMBINED_ROWS["time"], COMBINED_ROWS["marker"]])
+    assert set(rows) == {1, 74} and rows[74][0] == 730 and rows[1][3] == 3
+    assert COMBINED_ROWS["eeg"] == list(range(34, 66)) and len(COMBINED_ROWS["eeg"]) == 32

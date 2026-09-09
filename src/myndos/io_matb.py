@@ -63,10 +63,26 @@ def stream_combined_csv_rows(path: str, wanted_rows_1based: list[int]) -> dict[i
     with open(path, "r") as fh:
         for i, line in enumerate(fh, start=1):
             if i in wanted:
-                out[i] = np.array([float(v) if v not in ("", "nan", "NaN") else np.nan for v in line.rstrip("\n").split(",")])
+                vals = line.rstrip("\r\n").split(",")
+                out[i] = np.array([v if v not in ("", "nan", "NaN") else "nan" for v in vals], dtype=float)
                 if len(out) == len(wanted):
                     break
     return out
+
+
+def eeg_channel_names(xyz_path: str) -> list[str]:
+    """Official 32-channel order from EEG_32_Channel_mapping.xyz (index, x, y, z, label)."""
+    names = []
+    with open(xyz_path) as fh:
+        for line in fh:
+            parts = line.split()
+            if len(parts) >= 5:
+                names.append(parts[4])
+    return names
+
+
+# Documented 1-based rows of the combined EEG/fNIRS/eye CSV (README + owner brief)
+COMBINED_ROWS = {"time": 1, "fnirs": list(range(2, 34)), "eeg": list(range(34, 66)), "eye": list(range(66, 74)), "marker": 74}
 
 
 MATB_TARGET_LEVEL = 2500  # RESMAN target for tanks A and B (DIFF_A/B == TANK - 2500 in the released files)
