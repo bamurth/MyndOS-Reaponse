@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-09-09 19:40 UTC (checkpoint 0: environment and data access)
+Updated: 2026-09-09 20:05 UTC (checkpoint 1: EEGMAT complete; ds007554 audited)
 
 ## Environment
 - Claude Code cloud session, 4 vCPU, 15 GB RAM, 30 GB writable disk, CPU only.
@@ -42,8 +42,8 @@ RESULTS.md is attributed to the primary dataset.
 
 ## Checkpoints
 - [x] 0. Environment, access audit, plan committed
-- [ ] 1. EEGMAT EDF audit, QC, per-bin features, before/during metrics
-- [ ] 2. ds007554 one-subject clock/format audit
+- [x] 1. EEGMAT EDF audit, QC, per-bin features, before/during metrics (results/tables/eegmat_*.{csv,json}, results/figures/figE1)
+- [x] 2. ds007554 clock/format audit (results/audit/ds007554_*.csv): Delsys ECG/button streams are offset from the EEG/events clock by an undeclared per-file amount (typically +4 to +6.5 s, one -21.75 s); 43/120 button files pass the frozen event-matching acceptance rule; EDF header dates within one 'session' span ~2 months and are not used for chronology
 - [ ] 3. ds007554 cohort features and descriptives
 - [ ] 4. Held-out prediction test (if N ≥ 20 usable) with controls
 - [ ] 5. Figures, tests, RESULTS.md, manifest

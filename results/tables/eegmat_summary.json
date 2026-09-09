@@ -1,0 +1,317 @@
+{
+  "n_subjects": 36,
+  "exclusions": {
+    "cardiac_excluded_subjects": [
+      "Subject02",
+      "Subject13",
+      "Subject20",
+      "Subject35"
+    ],
+    "rule": "whole-file valid-beat coverage >= 0.8 in both recordings"
+  },
+  "paired_deltas": {
+    "hr": {
+      "n": 32,
+      "median_delta": 13.728084265472042,
+      "mean_delta": 14.931535476596357,
+      "ci95": [
+        11.961088030975963,
+        18.067657519307662
+      ],
+      "wilcoxon_p": 4.656612873077393e-10,
+      "frac_positive": 1.0,
+      "mean_delta_fullbaseline": 14.794989087776598
+    },
+    "rmssd30": {
+      "n": 32,
+      "median_delta": -10.745024959712506,
+      "mean_delta": -13.90842105977521,
+      "ci95": [
+        -18.823509020340293,
+        -9.48606906113001
+      ],
+      "wilcoxon_p": 7.869675755500793e-08,
+      "frac_positive": 0.0625,
+      "mean_delta_fullbaseline": -14.468012468511748
+    },
+    "eeg_frontal_theta": {
+      "n": 36,
+      "median_delta": 0.04992428050862985,
+      "mean_delta": 0.07030230272487176,
+      "ci95": [
+        0.009103331521740584,
+        0.13103577409778208
+      ],
+      "wilcoxon_p": 0.03775702390703373,
+      "frac_positive": 0.6388888888888888,
+      "mean_delta_fullbaseline": 0.06828217041320646
+    },
+    "eeg_frontal_alpha": {
+      "n": 36,
+      "median_delta": -0.10351725493571717,
+      "mean_delta": -0.10670491833903267,
+      "ci95": [
+        -0.16864609031746078,
+        -0.04638510982516429
+      ],
+      "wilcoxon_p": 0.0024800077080726624,
+      "frac_positive": 0.3333333333333333,
+      "mean_delta_fullbaseline": -0.12261340053788657
+    },
+    "eeg_frontal_beta": {
+      "n": 36,
+      "median_delta": -0.024087460155717832,
+      "mean_delta": -0.03222737849945312,
+      "ci95": [
+        -0.06492724482693743,
+        -0.0026240380004599025
+      ],
+      "wilcoxon_p": 0.04597194929374382,
+      "frac_positive": 0.3055555555555556,
+      "mean_delta_fullbaseline": -0.028141016120302384
+    },
+    "eeg_central_theta": {
+      "n": 36,
+      "median_delta": -0.0360549829036092,
+      "mean_delta": -0.057245780937207814,
+      "ci95": [
+        -0.10649696102903665,
+        -0.006312578722988157
+      ],
+      "wilcoxon_p": 0.03929476501070894,
+      "frac_positive": 0.3055555555555556,
+      "mean_delta_fullbaseline": -0.048246999161802064
+    },
+    "eeg_central_alpha": {
+      "n": 36,
+      "median_delta": -0.19351864744874486,
+      "mean_delta": -0.185000079664874,
+      "ci95": [
+        -0.24827021723213558,
+        -0.12201607311070281
+      ],
+      "wilcoxon_p": 3.958528395742178e-06,
+      "frac_positive": 0.1388888888888889,
+      "mean_delta_fullbaseline": -0.18347062564574645
+    },
+    "eeg_central_beta": {
+      "n": 36,
+      "median_delta": -0.04792430225507144,
+      "mean_delta": -0.06780639930583139,
+      "ci95": [
+        -0.11064505010255929,
+        -0.03210971066062633
+      ],
+      "wilcoxon_p": 0.0004440157790668309,
+      "frac_positive": 0.2777777777777778,
+      "mean_delta_fullbaseline": -0.05788856162449038
+    },
+    "eeg_parietal_theta": {
+      "n": 36,
+      "median_delta": -0.068997096329586,
+      "mean_delta": -0.09722782240858033,
+      "ci95": [
+        -0.14743621963129702,
+        -0.04727679488367644
+      ],
+      "wilcoxon_p": 0.0016348300559911877,
+      "frac_positive": 0.3055555555555556,
+      "mean_delta_fullbaseline": -0.07775799582488545
+    },
+    "eeg_parietal_alpha": {
+      "n": 36,
+      "median_delta": -0.2958977620482611,
+      "mean_delta": -0.2702009357267443,
+      "ci95": [
+        -0.367305128152878,
+        -0.16892511814631805
+      ],
+      "wilcoxon_p": 1.4609657227993011e-05,
+      "frac_positive": 0.1388888888888889,
+      "mean_delta_fullbaseline": -0.2712846807247993
+    },
+    "eeg_parietal_beta": {
+      "n": 36,
+      "median_delta": -0.0629793539572609,
+      "mean_delta": -0.0760014359851891,
+      "ci95": [
+        -0.11531218632810265,
+        -0.039416515237603804
+      ],
+      "wilcoxon_p": 0.0005845052655786276,
+      "frac_positive": 0.25,
+      "mean_delta_fullbaseline": -0.08319058816372846
+    },
+    "eeg_occipital_theta": {
+      "n": 36,
+      "median_delta": -0.11745800590748967,
+      "mean_delta": -0.1296341922109696,
+      "ci95": [
+        -0.19245598019361648,
+        -0.07076248660327945
+      ],
+      "wilcoxon_p": 0.00020027603022754192,
+      "frac_positive": 0.16666666666666666,
+      "mean_delta_fullbaseline": -0.10487207331135154
+    },
+    "eeg_occipital_alpha": {
+      "n": 36,
+      "median_delta": -0.24167230137004292,
+      "mean_delta": -0.24373748414876292,
+      "ci95": [
+        -0.35100020793298303,
+        -0.12879810131818123
+      ],
+      "wilcoxon_p": 7.807108340784907e-05,
+      "frac_positive": 0.2222222222222222,
+      "mean_delta_fullbaseline": -0.2561400562177179
+    },
+    "eeg_occipital_beta": {
+      "n": 36,
+      "median_delta": -0.06483109735617154,
+      "mean_delta": -0.06532618852139935,
+      "ci95": [
+        -0.10441410891260991,
+        -0.027012398848078507
+      ],
+      "wilcoxon_p": 0.003692160767968744,
+      "frac_positive": 0.3055555555555556,
+      "mean_delta_fullbaseline": -0.0732329244785029
+    }
+  },
+  "associations": {
+    "hr": {
+      "n": 32,
+      "spearman_rho_vs_subtractions": 0.08560953397743112,
+      "p": 0.6413085599664543
+    },
+    "rmssd30": {
+      "n": 32,
+      "spearman_rho_vs_subtractions": 0.0927589383138761,
+      "p": 0.6136023046248164
+    },
+    "eeg_frontal_theta": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": 0.19809499456159949,
+      "p": 0.24680497381469957
+    },
+    "eeg_frontal_alpha": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": 0.06268503076770562,
+      "p": 0.7164598767375286
+    },
+    "eeg_frontal_beta": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": 0.20028317838716622,
+      "p": 0.24151743532053324
+    },
+    "eeg_central_theta": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": 0.20247136221273296,
+      "p": 0.23630658670514199
+    },
+    "eeg_central_alpha": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": 0.10426052345347342,
+      "p": 0.5450867458628196
+    },
+    "eeg_central_beta": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": -0.06899214885316265,
+      "p": 0.6892885217491874
+    },
+    "eeg_parietal_theta": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": 0.03475350781782448,
+      "p": 0.8405245224914122
+    },
+    "eeg_parietal_alpha": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": 0.07259621633056668,
+      "p": 0.6739296290829222
+    },
+    "eeg_parietal_beta": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": -0.02342643860312613,
+      "p": 0.8921244456155574
+    },
+    "eeg_occipital_theta": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": 0.055991762595383875,
+      "p": 0.7456739212160164
+    },
+    "eeg_occipital_alpha": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": 0.030119706775447883,
+      "p": 0.8615670133249664
+    },
+    "eeg_occipital_beta": {
+      "n": 36,
+      "spearman_rho_vs_subtractions": 0.04183292607701094,
+      "p": 0.8085900634905835
+    }
+  },
+  "heldout_state_classification_baseline_vs_task": {
+    "cardiac_only": {
+      "pooled_auc": 0.7554295722713865,
+      "participant_mean_auc": 0.9663160403050108,
+      "participant_auc_ci95": {
+        "mean": 0.4663160403050109,
+        "ci_low": 0.4425891884531591,
+        "ci_high": 0.48466435185185186,
+        "n": 32,
+        "frac_boot_below_zero": 0.0
+      },
+      "n_bins": 757,
+      "n_participants": 32
+    },
+    "eeg_only": {
+      "pooled_auc": 0.6971117506831793,
+      "participant_mean_auc": 0.8302280016945048,
+      "participant_auc_ci95": {
+        "mean": 0.33022800169450495,
+        "ci_low": 0.27662632761437916,
+        "ci_high": 0.37991378071290244,
+        "n": 36,
+        "frac_boot_below_zero": 0.0
+      },
+      "n_bins": 853,
+      "n_participants": 36
+    },
+    "cardiac_plus_eeg": {
+      "pooled_auc": 0.7886650386650387,
+      "participant_mean_auc": 0.9383926410070202,
+      "participant_auc_ci95": {
+        "mean": 0.4383926410070201,
+        "ci_low": 0.40418179617526023,
+        "ci_high": 0.46797423444686514,
+        "n": 36,
+        "frac_boot_below_zero": 0.0
+      },
+      "n_bins": 853,
+      "n_participants": 36
+    },
+    "note": "single 10-s bins; positive class = arithmetic file; participant-grouped 12-fold; participant AUC CI is a bootstrap over participants of AUC-0.5"
+  },
+  "heldout_performance_from_physiological_change": {
+    "cardiac": {
+      "n": 36,
+      "mae_model": 8.794104014305809,
+      "mae_mean_baseline": 8.518412698412696,
+      "spearman_pred_vs_true": -0.48577680927581324
+    },
+    "eeg": {
+      "n": 36,
+      "mae_model": 9.632438840120113,
+      "mae_mean_baseline": 8.518412698412696,
+      "spearman_pred_vs_true": -0.3931007884282813
+    },
+    "both": {
+      "n": 36,
+      "mae_model": 9.806049650095122,
+      "mae_mean_baseline": 8.518412698412696,
+      "spearman_pred_vs_true": -0.37057536669450614
+    },
+    "note": "leave-one-participant-out ridge (alpha fixed at 10, not tuned); exploratory at N=36"
+  }
+}

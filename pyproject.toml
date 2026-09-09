@@ -1,0 +1,9 @@
+[project]
+name = "myndos"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["numpy", "pandas", "scipy", "scikit-learn", "matplotlib", "pyedflib", "mne", "pyarrow", "pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
