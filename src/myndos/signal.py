@@ -164,11 +164,17 @@ def eeg_bin_features(eeg: np.ndarray, fs: float, names: list[str], t0: float, t1
                      groups: dict[str, list[int]] | None = None) -> dict:
     """Log10 band power by channel group for the window [t0, t1) of a preprocessed array."""
     a, b = int(round(t0 * fs)), int(round(t1 * fs))
-    win = eeg[:, a:b]
-    ok, ch_ok = window_artifact_mask(win)
+    win = eeg[:, max(a, 0):max(b, 0)]
     groups = groups or channel_groups(names)
+    if win.shape[1] < int(fs):  # window (partly) outside the recording: no feature, flagged not ok
+        feats = {"eeg_ok": False, "eeg_bad_ch_frac": np.nan}
+        for g in groups:
+            for band in BANDS:
+                feats[f"eeg_{g}_{band}"] = np.nan
+        return feats
+    ok, ch_ok = window_artifact_mask(win)
     feats = {"eeg_ok": ok, "eeg_bad_ch_frac": float(np.mean(~ch_ok))}
-    if not ok or win.shape[1] < int(fs):
+    if not ok:
         for g in groups:
             for band in BANDS:
                 feats[f"eeg_{g}_{band}"] = np.nan

@@ -66,8 +66,11 @@ def test_eeg_working_start_from_markers():
     mt = np.array([5.0, 65.0, 425.5, 785.0, 1144.0, 1505.0, 1865.0])  # rest, working start, 4 transitions (+/- few s), end
     i, devs, cands = find_working_start(mt)
     assert i == 1 and np.allclose(devs, [0.5, 0.0, -1.0, 0.0]) and cands[0][0] == 1 and len(cands) >= 2  # later transitions also chain; earliest wins
-    # a missing transition marker makes the anchor ambiguous (no candidate)
-    i2, d2, c2 = find_working_start(np.array([5.0, 65.0, 425.0, 1145.0, 1505.0]))
+    # one late press (+16 s) must not move the anchor to a later transition marker (p20 case)
+    i3, d3, _ = find_working_start(np.array([107.9, 484.0, 831.5, 1187.6, 1547.9]))
+    assert i3 == 0 and abs(d3[0] - 16.1) < 0.05 and abs(d3[1] - 3.6) < 0.05
+    # a single matching transition is not enough: no anchor
+    i2, d2, c2 = find_working_start(np.array([5.0, 65.0, 425.0, 1000.0]))
     assert i2 is None and len(c2) == 0
 
 

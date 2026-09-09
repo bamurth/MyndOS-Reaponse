@@ -5,8 +5,8 @@ EEG 34-65 (32 channels in the order of EEG_32_Channel_mapping.xyz); pupil/gaze 6
 participants whose Tobii data were recorded separately have 66 rows with the markers in row 66 (verified on p28).
 Only the needed rows are streamed (myndos.io_matb.stream_combined_csv_rows); no wide DataFrame is built.
 
-Chronology (frozen): the EEG stream has its own clock. Its working-start marker is the EARLIEST marker followed by markers at
-+360 and +720 s (tolerance 15 s each); that marker anchors task time zero on the EEG clock
+Chronology (frozen): the EEG stream has its own clock. Its working-start marker is the EARLIEST marker with a marker near its +360-s transition and at least two of
+its four expected transitions within 15 s; that marker anchors task time zero on the EEG clock
 (t_task = t_eeg - t_eeg0), which is matched to the wrist tag / MATB elapsed time by construction of the experiment, not
 by any signal correlation. Actual EEG markers govern the EEG block boundaries; each transition's deviation from the
 nominal 360-s grid is recorded as the cross-device uncertainty for that boundary, and a boundary deviating by more than
@@ -54,9 +54,12 @@ def official_sha(rel):
 
 
 def find_working_start(mt: np.ndarray, tol: float = 15.0):
-    """Working start = EARLIEST marker whose +360 and +720 s transitions both have markers within ``tol``.
-    Returns (index, deviations of the four transitions from the 360-s grid (NaN if no marker within 60 s), candidates).
-    A deviation beyond 10 s marks that boundary ambiguous downstream; NaN means the boundary falls back to the grid."""
+    """Working start = EARLIEST marker that has a marker within 60 s of its +360-s transition and at least two of its
+    four expected transitions (+360, +720, +1080, +1440 s) within ``tol``. Returns (index, deviations of the four
+    transitions from the grid (NaN when no marker within 60 s), candidates). Deviations beyond 10 s mark that boundary
+    ambiguous downstream (timing estimates dropped for the adjacent cycle); NaN falls back to the nominal grid.
+    Rationale (frozen after p20: 5 markers with the first transition 16 s late): experimenter presses can be tens of
+    seconds off; the anchor must not jump to a later transition marker just because one press was late."""
     cands = []
     for i in range(mt.size):
         devs = []
@@ -64,7 +67,8 @@ def find_working_start(mt: np.ndarray, tol: float = 15.0):
             target = mt[i] + k * BLOCK_S
             j = int(np.argmin(np.abs(mt - target)))
             devs.append(float(mt[j] - target) if abs(mt[j] - target) <= 60.0 else np.nan)
-        if np.isfinite(devs[0]) and np.isfinite(devs[1]) and abs(devs[0]) <= tol and abs(devs[1]) <= tol:
+        n_within = int(np.sum([np.isfinite(d) and abs(d) <= tol for d in devs]))
+        if np.isfinite(devs[0]) and n_within >= 2:
             cands.append((i, devs))
     if not cands:
         return None, None, cands
@@ -147,7 +151,9 @@ def process(pid: str) -> dict:
     # actual EEG block boundaries from markers (nominal grid + recorded deviation)
     bounds = [t0] + [t0 + k * BLOCK_S + (devs[k - 1] if np.isfinite(devs[k - 1]) else 0.0) for k in range(1, 5)] + [min(t0 + 5 * BLOCK_S, float(t[-1]))]
     a["max_abs_transition_deviation_s"] = float(np.nanmax(np.abs(devs)))
-    segs = [(bounds[i], bounds[i + 1], BLOCKS[i]) for i in range(5)]
+    t_last = float(t[-1]); bounds = [min(b_, t_last) for b_ in bounds]  # recording may stop early (e.g. p16 'stopped after 24 minutes')
+    segs = [(bounds[i], bounds[i + 1], BLOCKS[i]) for i in range(5) if bounds[i + 1] - bounds[i] >= BIN]
+    a["blocks_truncated"] = [BLOCKS[i] for i in range(5) if t0 + (i + 1) * BLOCK_S > t_last + 1.0]
     if ws_i > 0 and t0 - mt[ws_i - 1] >= 30:
         segs = [(max(mt[ws_i - 1], t0 - 60.0), t0, "quiet_rest")] + segs
     a["timing_ambiguous_boundaries"] = [BLOCKS[k] for k in range(1, 5) if not np.isfinite(devs[k - 1]) or abs(devs[k - 1]) > 10.0]
