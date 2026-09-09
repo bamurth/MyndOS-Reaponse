@@ -65,7 +65,7 @@ def test_eeg_working_start_from_markers():
     from matb_eeg import find_working_start
     mt = np.array([5.0, 65.0, 425.5, 785.0, 1144.0, 1505.0, 1865.0])  # rest, working start, 4 transitions (+/- few s), end
     i, devs, cands = find_working_start(mt)
-    assert i == 1 and np.allclose(devs, [0.5, 0.0, -1.0, 0.0]) and len(cands) == 2  # the +360 marker also chains to the end marker
+    assert i == 1 and np.allclose(devs, [0.5, 0.0, -1.0, 0.0]) and cands[0][0] == 1 and len(cands) >= 2  # later transitions also chain; earliest wins
     # a missing transition marker makes the anchor ambiguous (no candidate)
     i2, d2, c2 = find_working_start(np.array([5.0, 65.0, 425.0, 1145.0, 1505.0]))
     assert i2 is None and len(c2) == 0
