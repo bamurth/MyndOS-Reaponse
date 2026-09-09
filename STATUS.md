@@ -1,6 +1,6 @@
 # STATUS
 
-Updated: 2026-09-09 20:05 UTC (checkpoint 1: EEGMAT complete; ds007554 audited)
+Updated: 2026-09-09 20:45 UTC (checkpoint 2: ds007554 descriptives + prediction test, four figures, RESULTS.md)
 
 ## Environment
 - Claude Code cloud session, 4 vCPU, 15 GB RAM, 30 GB writable disk, CPU only.
@@ -44,6 +44,8 @@ RESULTS.md is attributed to the primary dataset.
 - [x] 0. Environment, access audit, plan committed
 - [x] 1. EEGMAT EDF audit, QC, per-bin features, before/during metrics (results/tables/eegmat_*.{csv,json}, results/figures/figE1)
 - [x] 2. ds007554 clock/format audit (results/audit/ds007554_*.csv): Delsys ECG/button streams are offset from the EEG/events clock by an undeclared per-file amount (typically +4 to +6.5 s, one -21.75 s); 43/120 button files pass the frozen event-matching acceptance rule; EDF header dates within one 'session' span ~2 months and are not used for chronology
-- [ ] 3. ds007554 cohort features and descriptives
-- [ ] 4. Held-out prediction test (if N ≥ 20 usable) with controls
-- [ ] 5. Figures, tests, RESULTS.md, manifest
+- [x] 3. ds007554 cohort features and descriptives (515 files / 30 participants; results/tables/ds007554_*.{csv,json})
+- [x] 4. Held-out prediction test run with controls on the event-matched cohort: 15 participants → labelled insufficient-N/exploratory; physiology added nothing beyond past performance
+- [x] 5. Figures (results/figures/fig1-4, figE1), 9 tests passing, RESULTS.md, MANIFEST.md
+- [ ] 6. Optional BIOT frozen-encoder audit: checkpoint fetched (MIT); torch install from PyPI attempted under the 30-min cap (see below)
+- [ ] 7. PRIMARY MATB-II: waiting on physionet.org network access; scripts/matb_pipeline.py ready but untested on real data

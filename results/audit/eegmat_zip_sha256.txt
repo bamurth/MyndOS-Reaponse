@@ -1,0 +1,1 @@
+cbd43c71fbda2eea06c714ef8c2228e47c2444ae7be3e72a5e441889b011f9e7  data/raw/eegmat/eegmat-1.0.0.zip
