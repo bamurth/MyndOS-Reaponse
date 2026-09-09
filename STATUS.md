@@ -18,7 +18,13 @@
 - Figures: figM1 (p01 first real baseline/challenge/recovery plot), figM2 cohort event-aligned, figM3 recovery incl. censoring,
   figM4 burden vs performance, figM5 added-value.
 - Disk/download: 34 MB wrist+behaviour; EEG p01 (606 MB) downloading; 8 GB cap → 5 EEG participants ≈ 3 GB projected.
-- Next: Checkpoint 2 EEG one participant at a time (`scripts/matb_eeg.py`), p01 first.
+- Checkpoint 2 (EEG) in progress, 21:45 UTC: p01.csv (606,286,984 B) verified against SHA256SUMS; rows = channels
+  confirmed (504,214 samples at exactly 250 Hz, 2,016.9 s); EEG rows 34-65 in microvolts (retained channels robust SD
+  7-15 uV); the release is already low-passed (no 55-65 Hz power); 5 markers at 203.4, 562.4, 920.5, 1280.1, 1640.1 s
+  = working start + four transitions within -0.9..-3.3 s of the 360-s grid (no quiet-rest marker; EEG starts 203 s
+  before working start). Real-data QC: 15/32 channels rejected for p01 (whole-recording robust SD > 40 uV or p99 > 300 uV
+  or flat: FZ FT7 FT8 FC3 FC4 FC6 C1 CZ C2 CP1 CP2 P8 PO7 PO8 OZ), occipital group empty -> NaN; 176/176 retained-channel
+  bins pass the window screen. p02-p05 EEG files downloading one at a time (~17 min each).
 
 Updated: 2026-09-09 21:15 UTC (checkpoint 3, final for tonight: BIOT audit run; all deliverables except the blocked primary dataset)
 

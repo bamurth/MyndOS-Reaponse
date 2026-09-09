@@ -11,8 +11,12 @@ by any signal correlation. Actual EEG markers govern the EEG block boundaries; e
 nominal 360-s grid is recorded as the cross-device uncertainty for that boundary, and a boundary deviating by more than
 10 s makes the adjacent challenge/recovery timing estimates 'ambiguous' (excluded). Eye rows are audited (row indices,
 ranges) but not analysed: they are on the same rows/clock for p01-p24 per README, still unproven for analysis.
-Features: 0.5-40 Hz band-pass + 60-Hz notch (US mains), per-10-s-bin artifact screen (150 uV peak, flat < 0.5 uV, <=25 %
-bad channels), log10 Welch power for theta/alpha/beta by frontal/central/parietal/occipital groups. Same reference,
+Features: 0.5-40 Hz band-pass + 60-Hz notch (US mains; the released EEG already has no 55-65 Hz power), then a
+per-participant CHANNEL screen over the whole recording (frozen after the p01 QC table, before any outcome: a channel is
+retained iff its robust SD (1.4826*MAD of the filtered signal) is within 1-40 uV and its 99th-percentile |amplitude| is
+<= 300 uV; p01 had 12 channels at 175-15,000 uV and 2 flat ones), then the per-10-s-bin artifact screen on the retained
+channels (150 uV peak, flat < 0.5 uV, <= 25 % bad), log10 Welch power for theta/alpha/beta by frontal/central/parietal/
+occipital groups over retained channels (>= 8 retained channels and >= 1 frontal, central and parietal channel required; an empty occipital group gives NaN occipital features). Same reference,
 band and recovery rules as the wrist pipeline (scale floor 0.05 log10 units).
 Usage: .venv/bin/python scripts/matb_eeg.py p01 [p02 ...]   (rebuilds cohort outputs from all cached participants)
 """
@@ -91,10 +95,24 @@ def process(pid: str) -> dict:
     eeg = eeg_preprocess(eeg_raw, fs, notch=60.0)
     sd = eeg.std(axis=1); a["eeg_filtered_sd_uV_median"] = float(np.median(sd)); a["eeg_filtered_sd_uV_min"] = float(sd.min()); a["eeg_filtered_sd_uV_max"] = float(sd.max())
     a["flat_channels"] = [names[i] for i in np.flatnonzero(sd < 0.5)]
+    rsd = np.median(np.abs(eeg - np.median(eeg, axis=1, keepdims=True)), axis=1) * 1.4826; p99 = np.percentile(np.abs(eeg), 99, axis=1)
+    keep = (rsd >= 1.0) & (rsd <= 40.0) & (p99 <= 300.0)
+    a["channel_robust_sd_uV"] = np.round(rsd, 1).tolist(); a["channel_p99_uV"] = np.round(p99, 1).tolist()
+    a["channels_retained"] = [n_ for n_, k in zip(names, keep) if k]; a["channels_rejected"] = [n_ for n_, k in zip(names, keep) if not k]
+    a["n_channels_retained"] = int(keep.sum())
+    fw, Pw = __import__("scipy.signal", fromlist=["welch"]).welch(eeg_raw[keep][:, int(100 * fs):int(400 * fs)] if keep.any() else eeg_raw[:, :int(300 * fs)], fs=fs, nperseg=int(2 * fs), axis=1)
+    a["raw_power_55_65Hz_over_8_13Hz"] = float(np.mean(Pw[:, (fw >= 55) & (fw < 65)]) / max(np.mean(Pw[:, (fw >= 8) & (fw < 13)]), 1e-12))
+    eeg = eeg[keep]; names = [n_ for n_, k in zip(names, keep) if k]
+    groups_all = {g: channel_groups(names).get(g, []) for g in ("frontal", "central", "parietal", "occipital")}
+    a["retained_per_group"] = {g: len(v) for g, v in groups_all.items()}
+    if keep.sum() < 8 or any(len(groups_all[g]) == 0 for g in ("frontal", "central", "parietal")):
+        a["status"] = f"EEG unusable: {int(keep.sum())} retained channels, groups {list(groups_all)}"
     # plausibility of the channel order: alpha power should be larger over parietal/occipital than frontal in most people
     eye = np.vstack([rows[r] for r in COMBINED_ROWS["eye"]]); a["eye_rows_nonconstant"] = int((eye.std(axis=1) > 0).sum())
     a["eye_row_ranges"] = [[float(np.nanmin(e)), float(np.nanmax(e))] for e in eye]
     mk = rows[COMBINED_ROWS["marker"]]; idx = np.flatnonzero(mk != 0)
+    if a.get("status", "").startswith("EEG unusable"):
+        return a
     # collapse runs of consecutive nonzero samples into single events (marker value = first sample of the run)
     ev_t, ev_v = [], []
     for i in idx:
@@ -116,7 +134,7 @@ def process(pid: str) -> dict:
     if ws_i > 0 and t0 - mt[ws_i - 1] >= 30:
         segs = [(max(mt[ws_i - 1], t0 - 60.0), t0, "quiet_rest")] + segs
     a["timing_ambiguous_boundaries"] = [BLOCKS[k] for k in range(1, 5) if abs(devs[k - 1]) > 10.0]
-    bins = make_bins(segs, width=BIN); groups = channel_groups(names)
+    bins = make_bins(segs, width=BIN); groups = groups_all  # empty occipital group -> occipital features NaN
     out = []
     for b in bins.itertuples():
         f = eeg_bin_features(eeg, fs, names, b.t_start - t[0], b.t_end - t[0], groups)
