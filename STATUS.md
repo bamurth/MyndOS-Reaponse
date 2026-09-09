@@ -1,22 +1,24 @@
 # STATUS
 
-## 2026-09-09 21:10 UTC — PRIMARY dataset access restored; Checkpoint 1 INTERIM (partial cohort, download in progress)
-- physionet.org is now allowed by the network policy, but the site served an **expired Let's Encrypt certificate**
-  (notAfter 2026-09-09 20:22:45 UTC; container clock verified against external HTTP Date headers). The owner authorised
-  certificate-check bypass for these public files only (no credentials involved); integrity relies on the official
-  SHA256SUMS.txt: **all 48 files fetched so far verify OK** (results/audit/matb_SHA256SUMS_verified.txt). Not on AWS Open Data.
-- Read README.txt, LICENSE.txt (ODbL), SHA256SUMS.txt (383 entries), directory listings: 35 participants (p14, p23 absent),
-  `MATB-II/pXXresman.csv` (35 files, 6.3-6.8 KB), `PPG/pXX/{ACC,BVP,EDA,HR,IBI,TEMP,tags}.csv+info.txt`,
-  `EEGfNIRSeye_*/pXX/pXX.csv` (p01 = 606,286,984 B).
-- MATB-II format verified and parser implemented (`myndos.io_matb.read_matb_resman`): ELAPSED_TIME mm:ss.s at a 10-s
-  cadence from working start, TANK_A-D, DIFF_A/B == TANK-2500 in every file; 179-180 rows (29:50-30:00). p01 E4 tag sits
-  61.6 s after session start, HR.csv starts +10 s, task time zero = tag (rule frozen).
-- Real-data QC finding: vendor HR.csv keeps emitting values with no pulse in the PPG (p01: 100-165 bpm with 1.5 % accepted
-  beats; raw BVP shows no waveform for p01/p02). HR bins are therefore gated by accepted-beat (IBI) coverage >= 50 %.
-- Interim run on the 20 participants downloaded at that time: all usable, N=20 prediction test executed. Numbers in
-  results/tables/matb_* are INTERIM and will be overwritten by the full-cohort run.
-- Downloads in progress: remaining PPG folders (~1.4 MB each), then EEG p01 (606 MB). 8 GB cap: ~0.7 GB projected for 5 EEG participants.
-
+## 2026-09-09 21:35 UTC — PRIMARY dataset: Checkpoint 1 COMPLETE (wrist + behaviour, full cohort N = 35)
+- physionet.org allowed by the network policy since this session; the site served an **expired Let's Encrypt certificate**
+  (notAfter 2026-09-09 20:22:45 UTC; container clock checked against external HTTP Date headers). The owner authorised
+  certificate-check bypass for these public files only (no credentials; `MATB_CURL_INSECURE=1 scripts/download_matb.sh`).
+  Integrity rests on the official SHA256SUMS.txt: **320/320 downloaded docs + MATB-II + PPG files verify OK**
+  (`results/audit/matb_SHA256SUMS_verified.txt`). Dataset is not on AWS Open Data.
+- Read README.txt, LICENSE.txt (ODbL), SHA256SUMS.txt (383 entries), directory listings: 35 participants (p14, p23 absent).
+- MATB-II format verified and parsed (`myndos.io_matb.read_matb_resman`, tests in `tests/test_matb.py`, 14 tests pass).
+- Alignment audit `results/audit/matb_alignment_audit.csv`: 35/35 usable; task zero = E4 tag; HR.csv +10 s in all; one
+  double-press tag (p02, 2.83 s); quiet rest on the wrist only for 4 participants.
+- Real-data QC finding: vendor HR.csv emits values without a pulse (p01 100-165 bpm, 1.5 % accepted beats; raw BVP is noise).
+  HR bins gated by accepted-beat coverage >= 50 % (frozen after inspecting 4 raw traces, before outcomes). No HRV.
+- Results (RESULTS.md section 0): HR +1.7 bpm [0.4, 3.0] in challenge 1 (N=31), ~0 in challenge 2; EDA +0.21 uS; target error
+  +314 fuel units in challenge 1, +455 in challenge 2, decaying over minutes in recovery; recovery table with censoring;
+  prediction test run at N=35: peripheral physiology adds nothing beyond past performance (+0.29 MAE, controls identical).
+- Figures: figM1 (p01 first real baseline/challenge/recovery plot), figM2 cohort event-aligned, figM3 recovery incl. censoring,
+  figM4 burden vs performance, figM5 added-value.
+- Disk/download: 34 MB wrist+behaviour; EEG p01 (606 MB) downloading; 8 GB cap → 5 EEG participants ≈ 3 GB projected.
+- Next: Checkpoint 2 EEG one participant at a time (`scripts/matb_eeg.py`), p01 first.
 
 Updated: 2026-09-09 21:15 UTC (checkpoint 3, final for tonight: BIOT audit run; all deliverables except the blocked primary dataset)
 
@@ -66,7 +68,8 @@ RESULTS.md is attributed to the primary dataset.
 - [x] 4. Held-out prediction test run with controls on the event-matched cohort: 15 participants → labelled insufficient-N/exploratory; physiology added nothing beyond past performance
 - [x] 5. Figures (results/figures/fig1-4, figE1), 9 tests passing, RESULTS.md, MANIFEST.md
 - [x] 6. Optional BIOT frozen-encoder audit run on EEGMAT (results/tables/biot_frozen_eegmat.json): pretrained frozen embeddings worse than handcrafted band power and not better than random weights
-- [ ] 7. PRIMARY MATB-II: waiting on physionet.org network access; scripts/matb_pipeline.py ready but untested on real data
+- [x] 7. PRIMARY MATB-II Checkpoint 1: access, checksums, verified parser, audit, cohort metrics, prediction test, figures M1-M5 (21:35 UTC)
+- [ ] 8. PRIMARY MATB-II Checkpoint 2: EEG for five participants, one at a time
 
 ## Final state (21:15 UTC)
 - Deliverables present: PLAN.md, README.md, RESULTS.md, MANIFEST.md, requirements.lock.txt, `scripts/run_all.sh`, 9 passing tests,

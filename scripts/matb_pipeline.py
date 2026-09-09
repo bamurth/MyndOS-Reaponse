@@ -226,14 +226,20 @@ def fig_first_participant(df, M, pid):
     g = df[df.pid == pid]
     fig, axes = plt.subplots(len(FEATS), 1, figsize=(12, 11), sharex=True)
     for ax, c in zip(axes, FEATS):
-        shade_blocks(ax, g); ax.plot(g.t_end, g[c], color="#1f4e79", lw=1.2, marker=".", ms=3)
+        shade_blocks(ax, g)
+        if c == "hr":
+            ax.plot(g.t_end, g.hr_e4_raw, color="#aaaaaa", lw=0.9, ls="--", label="vendor HR.csv, all bins (not trusted without pulse)")
+            ax.text(0.01, 0.05, f"bins passing the accepted-beat (IBI >= 50 %) gate: {int(g.hr.notna().sum())}/{int(g.hr_e4_raw.notna().sum())}", transform=ax.transAxes, fontsize=7)
+        ax.plot(g.t_end, g[c], color="#1f4e79", lw=1.2, marker=".", ms=3, label="quality-gated 10-s bins" if c == "hr" else None)
         m1 = M[(M.pid == pid) & (M.feature == c) & (M.cycle == 1)]
         if len(m1) and np.isfinite(m1.ref_scale.iloc[0]):
             med, sc = m1.ref_median.iloc[0], m1.ref_scale.iloc[0]
             ax.axhspan(med - 2 * sc, med + 2 * sc, color="#a6d96a", alpha=0.25, lw=0, label="reference band +-2 robust units (final 3 min of working baseline)")
             ax.axhline(med, color="#4d9221", lw=0.8)
         ax.set_ylabel(f"{c}\n[{UNITS[c]}]", fontsize=8)
-    axes[0].legend(fontsize=7, loc="upper left")
+    for ax in axes:
+        h, l = ax.get_legend_handles_labels()
+        if h: ax.legend(fontsize=7, loc="upper left")
     axes[-1].set_xlabel("seconds since working-baseline start (E4 tag = MATB time zero)")
     fig.suptitle(f"PRIMARY MATB-II {pid}: wrist physiology and RESMAN target error, 10-s bins. Grey = quiet rest, red = challenge (RESMAN+COMMS), white = RESMAN only.", fontsize=9)
     fig.tight_layout(); fig.savefig("results/figures/figM1_first_participant_timecourse.png", dpi=150); plt.close(fig)

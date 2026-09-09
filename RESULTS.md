@@ -1,7 +1,8 @@
 # RESULTS — MyndOS response dynamics, 2026-09-09
 
 Everything below was computed tonight from public data inside this repository by `scripts/run_all.sh`.
-Nothing is attributed to the primary MATB-II dataset, which could not be reached (see STATUS.md).
+Section 0 (added 21:30 UTC) is the PRIMARY MATB-II dataset, reached once the network policy allowed physionet.org;
+sections 1-5 were produced earlier while it was blocked and are unchanged.
 Seeds = 0. Frozen parameters as in PLAN.md (10-s bins, ±2 robust-unit band with ±1.5/±2.5 sensitivity,
 3 consecutive valid bins, median/1.4826·MAD normalization).
 
@@ -9,12 +10,106 @@ Seeds = 0. Frozen parameters as in PLAN.md (10-s bins, ±2 robust-unit band with
 
 | Section | Dataset | Evidence type |
 |---|---|---|
+| 0 | PRIMARY neuro-stress-resilience-hci (PhysioNet) | Real wrist physiology + concurrent MATB-II performance through **baseline, challenge 1, recovery 1, challenge 2, recovery 2** (N = 35); held-out prediction test **run** (N = 35 ≥ 20); EEG: Checkpoint 2, see 0.7 |
 | 1 | EEGMAT (PhysioNet) | Real concurrent EEG+ECG, **before vs during** mental arithmetic; separate recordings; no recovery |
 | 2 | ds007554 / CMx7-MM (OpenNeuro) | Real concurrent EEG+ECG+behaviour, 25-s rest → 3-min task; **no recovery period**; cross-device clock unverified except where event-matched |
 | 3 | ds007554 | Held-out added-value prediction test: **insufficient-N (15 < 20), exploratory** |
-| 4 | — | Primary MATB-II response–recovery: **not run** (blocked) |
+| 4 | — | (superseded by section 0) |
 | 5 | EEGMAT | Foundation-model encoder audit (BIOT frozen): **run**, negative vs handcrafted features |
 | Tests | synthetic | Software checks only, never evidence about people |
+
+## 0. PRIMARY: MATB-II stress-resilience dataset, wrist physiology + RESMAN performance (N = 35)
+
+Source `https://physionet.org/files/neuro-stress-resilience-hci/1.0.0/` (ODbL). 35 participants (p14, p23 do not exist in the release).
+Files used: `MATB-II/pXXresman.csv` (35) and `PPG/pXX/{ACC,BVP,EDA,HR,IBI,TEMP,tags}.csv` + `info.txt` (35 × 8); all 320 verified against the
+official `SHA256SUMS.txt` (`results/audit/matb_SHA256SUMS_verified.txt`). Pipeline: `scripts/matb_pipeline.py`; audit: `results/audit/matb_alignment_audit.csv`;
+tables: `results/tables/matb_{participant_metrics,performance_by_block,prediction_participant_mae}.csv`, `matb_summary.json`; figures M1-M5.
+
+### 0.1 Formats verified on the real files (before any analysis)
+* **MATB-II log** = RESMAN fuel snapshots every 10 s (`ELAPSED_TIME` mm:ss.s from working start, `TANK_A..D`, `DIFF_A/B`). `DIFF == TANK − 2500` in all 35 files;
+  179-180 rows (29:50 or 30:00); no cadence anomalies (tolerance 0.5 s). Task performance = mean of |DIFF_A|, |DIFF_B| (fuel units from the 2500 target)
+  — a 10-s snapshot, so the "fixed interval" of PLAN.md is the mean of snapshots inside the interval.
+* **E4**: session start row + fs row + samples, ACC 32 Hz (1/64 g), BVP 64 Hz, EDA 4 Hz (µS), TEMP 4 Hz, HR 1 Hz; `HR.csv` starts exactly +10 s after
+  the other files in all 35 sessions; `IBI.csv` sparse and irregular; `tags.csv` = working-baseline start (README).
+* **Chronology rule (frozen)**: task time zero = first E4 tag; `t_epoch = tag + ELAPSED_TIME`; five 360-s blocks from the tag; quiet rest = ≤ 60 s before the tag.
+  No signal-derived offsets. Single tag in 34/35; p02 has a double press 2.83 s apart (first press used, recorded as `tag_uncertainty_s`, below the 5-s limit
+  for timing estimates). E4 coverage after the tag ≥ 1,825 s in all 35. **Quiet rest is captured on the wrist for only 4 participants** (p01, p03, p07, p16:
+  34-239 s before the tag); the other 31 tags were pressed 3-22 s after the E4 session started, so the "−60 to 0 s" rest state is not available from the wrist.
+* **Pulse quality (frozen after looking at raw BVP of p01/p02/p05/p09 only)**: the vendor `HR.csv` keeps emitting values when the PPG carries no pulse
+  (p01: 100-165 bpm while seated; raw BVP is noise; p02: flat BVP with spikes). HR bins are valid only when Empatica's accepted inter-beat intervals cover
+  ≥ 50 % of the bin. Accepted-beat coverage of the task: median 0.66 (min 0.007, max 0.98); HR-valid bin fraction is 0 for p01/p02 and < 0.15 for p03, p16, p36.
+  **No HRV** (sparse IBI). Wrist PPG is never called ECG.
+* Scale floors (frozen; the robust scale is never below hr 1 bpm, eda 0.02 µS, temp 0.05 °C, motion 0.02, abs_err 5): flagged references — hr 20, eda 27,
+  temp 21, motion 2, abs_err 0 of 35. Most participants' EDA sits below 1 µS with a nearly flat baseline, so EDA z-scores are dominated by the floor.
+
+### 0.2 Task performance (independent behavioural anchor), mean |target deviation| per block
+
+| block | median | IQR | vs working baseline, mean [95 % participant-bootstrap CI], N = 35 |
+|---|---|---|---|
+| working baseline | 117 | 63-187 | — |
+| challenge 1 | 333 | 225-609 | +314 [+214, +419] |
+| recovery 1 | 263 | 178-511 | +272 [+155, +412] |
+| challenge 2 | 392 | 233-730 | +455 [+290, +636] |
+| recovery 2 | 255 | 186-779 | +386 [+222, +561] |
+
+Adding COMMS roughly triples fuel error; the block mean during "recovery" stays far above baseline because the error decays over minutes (Figure M2 bottom:
+cohort-median z falls from ≈ 8 at 60 s to ≈ 2 at 180 s and ≈ 1.5 at 360 s after demand drops). Cycle 2 minus cycle 1 challenge error: +163 [+64, +269].
+
+### 0.3 Physiological response magnitude (challenge median − reference A median; physical units; N = participants with a valid reference)
+
+| feature | cycle 1 mean [CI] (N) | cycle 2 mean [CI] (N) | cycle 2 vs pre-cycle-2 state (ref C, median) |
+|---|---|---|---|
+| HR (bpm, gated) | +1.70 [+0.41, +3.03] (31) | −0.29 [−1.74, +1.25] (29) | −0.55 |
+| EDA (µS) | +0.21 [+0.04, +0.39] (35) | +0.18 [−0.08, +0.51] (35) | 0.00 |
+| motion (1/64 g) | +0.02 [−0.04, +0.08] (35) | +0.01 [−0.04, +0.06] (35) | −0.06 |
+| skin temp (°C) | −0.07 [−0.12, −0.02] (35) | −0.34 [−0.48, −0.19] (35) | −0.17 |
+| abs target error | +283 [+170, +396] (35) | +446 [+267, +637] (35) | +309 |
+
+Repeated challenge (cycle 2 − cycle 1, paired, matched 360-s durations): HR −2.34 bpm [−3.35, −1.29] (N = 29); EDA response −0.02 µS [−0.20, +0.17] but EDA burden
++925 [+355, +1751] |z|·s; skin temperature is a monotonic drift over the 31 minutes (cohort median −6.7 robust units by challenge 2), not a response, and is reported only
+as a control. Cycle differences are **not** interpreted as trait resilience.
+
+### 0.4 Response timing and recovery (band ±2 robust units of reference A, 3 consecutive valid 10-s bins; N = 35 per row)
+
+| feature, cycle | departed | median t_depart (s) | returned | censored (no return in 360 s) | not estimable (no excursion) | median return (s, returned only) |
+|---|---|---|---|---|---|---|
+| HR, 1 | 15 | 80 | 14 | 1 | 20 | 85 |
+| HR, 2 | 20 | 70 | 15 | 5 | 15 | 70 |
+| EDA, 1 | 19 | 50 | 5 | 14 | 16 | 80 |
+| EDA, 2 | 22 | 10 | 4 | 18 | 13 | 125 |
+| motion, 1 | 18 | 45 | 12 | 6 | 17 | 55 |
+| motion, 2 | 19 | 40 | 14 | 5 | 16 | 95 |
+| abs error, 1 | 34 | 30 | 22 | 12 | 1 | 150 |
+| abs error, 2 | 34 | 30 | 20 | 14 | 1 | 105 |
+
+"Not estimable" for HR includes the participants whose HR never passed the pulse gate. Recovery residuals (median z at 60/180/360 s after demand drops): HR cycle 1
++0.72 / +0.23 / −0.95, cycle 2 −0.89 / −0.24 / −0.89; abs error cycle 1 +8.1 / +2.0 / +1.5, cycle 2 +9.1 / +3.7 / −1.9. Sensitivity: band ±1.5 raises HR departures to
+20/22 and returns to 18/16; band ±2.5 lowers them to 13/18 and 12/15; with the whole baseline as reference (B) HR returns are 11/14 (full tables in `matb_summary.json`).
+EDA rarely "returns" because its slow drift keeps it outside a band built on a near-flat baseline (floored scale) — a limitation of the wrist EDA here, not evidence of
+non-recovery.
+
+### 0.5 Burden versus performance (across participants, Spearman; 16 tests, no correction)
+EDA burden during the challenge correlates *negatively* with challenge error: ρ = −0.40 (p = 0.017, cycle 1) and −0.37 (p = 0.029, cycle 2), i.e. participants with the larger
+skin-conductance excursion made smaller fuel errors. HR burden: ρ = −0.08 / 0.00 (N = 28/27). Motion and temperature: |ρ| ≤ 0.28. Treat the EDA finding as nominal.
+
+### 0.6 Functional AI test (held-out participants, N = 35, **run**)
+Target = mean absolute target error over the next 30 s within the same block; 5,743 rows; nested participant-grouped ridge (10 outer × 5 inner folds), imputation and scaling fitted
+inside training folds; personal reference from the pre-challenge baseline only (disclosed calibration).
+
+| model | participant-weighted MAE (fuel units) | Δ vs context + past performance [95 % paired bootstrap CI] |
+|---|---|---|
+| persistence (last 30 s) | 66.2 | +8.7 [+4.4, +13.1] |
+| condition/time only | 326.3 | +268.8 [+208.2, +345.1] |
+| context + past performance | 57.5 | — |
+| + peripheral physiology (HR, EDA, motion, temp, raw/z/30-s means, beat coverage) | 57.8 | +0.29 [+0.01, +0.60] |
+| control: mismatched-participant physiology | 57.6 | +0.09 [+0.02, +0.16] |
+| control: within-person 3-bin temporal shift | 57.6 | +0.11 [−0.29, +0.50] |
+
+**Result: wrist physiology adds no predictive information about the next 30 s of task error beyond recent performance and context** (it is marginally worse, and the two
+controls are indistinguishable from the real pairing). The multimodal (EEG) comparison is left to Checkpoint 2 on the matched five-participant cohort, which is below 20 participants
+and will be labelled insufficient-N.
+
+### 0.7 EEG (Checkpoint 2): see the end of this section once run.
 
 ## 1. EEGMAT: EEG + ECG before and during mental arithmetic (N = 36)
 
