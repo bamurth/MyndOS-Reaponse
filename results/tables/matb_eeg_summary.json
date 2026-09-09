@@ -1,113 +1,114 @@
 {
   "seed": 0,
-  "n_participants": 3,
+  "n_participants": 4,
   "participants": [
     "p01",
     "p02",
-    "p03"
+    "p03",
+    "p04"
   ],
-  "eeg_ok_fraction": 1.0,
-  "n_bins": 528,
+  "eeg_ok_fraction": 0.9589235127478754,
+  "n_bins": 706,
   "prediction_with_eeg": {
-    "status": "NOT RUN: matched EEG cohort N=3 < 20 (insufficient-N); descriptives only, per PLAN.md"
+    "status": "NOT RUN: matched EEG cohort N=4 < 20 (insufficient-N); descriptives only, per PLAN.md"
   },
   "response_log10_power": {
     "eeg_frontal_theta": {
       "cycle_1": {
-        "n": 3,
-        "median": 0.03669491271684744,
-        "q25": -0.004873304445023818,
-        "q75": 0.04456669567494964
+        "n": 4,
+        "median": 0.013234104908976363,
+        "q25": -0.019280407575894803,
+        "q75": 0.04063080419589854
       },
       "cycle_2": {
-        "n": 3,
-        "median": 0.025115079163154697,
-        "q25": -0.04477652596570186,
-        "q75": 0.06726758580505132
+        "n": 4,
+        "median": 0.02431695073728979,
+        "q25": -0.011027916040070945,
+        "q75": 0.04619133248410301
       }
     },
     "eeg_frontal_alpha": {
       "cycle_1": {
-        "n": 3,
-        "median": -0.02982867272509193,
-        "q25": -0.10808696715505495,
-        "q75": 0.0031607037645815517
+        "n": 4,
+        "median": -0.05633553226133153,
+        "q25": -0.10871810924443284,
+        "q75": -0.01333398448025519
       },
       "cycle_2": {
-        "n": 3,
-        "median": -0.02283508750569574,
-        "q25": -0.101865228633222,
-        "q75": 0.00021686242049945292
+        "n": 4,
+        "median": -0.027279275098231137,
+        "q25": -0.06901643945826197,
+        "q75": -0.011309112542598143
       }
     },
     "eeg_central_alpha": {
       "cycle_1": {
-        "n": 3,
-        "median": -0.056181866571166195,
-        "q25": -0.08295811884262844,
-        "q75": -0.00046492420055610495
+        "n": 4,
+        "median": -0.058642787087746395,
+        "q25": -0.07326137348176762,
+        "q75": -0.02832339538586115
       },
       "cycle_2": {
-        "n": 3,
-        "median": -0.036689800270100714,
-        "q25": -0.09338851034242074,
-        "q75": -0.007834032240617683
+        "n": 4,
+        "median": -0.02882096521070837,
+        "q25": -0.06503915530626073,
+        "q75": -0.010458663666270684
       }
     },
     "eeg_parietal_alpha": {
       "cycle_1": {
-        "n": 3,
-        "median": 0.04601093422363345,
-        "q25": -0.003808257439335383,
-        "q75": 0.058426253583013676
+        "n": 4,
+        "median": 0.0018695188602827484,
+        "q25": -0.04511078465287702,
+        "q75": 0.05221859390332356
       },
       "cycle_2": {
-        "n": 3,
-        "median": 0.020950177263093894,
-        "q25": -0.05605901633724225,
-        "q75": 0.04113314380194416
+        "n": 4,
+        "median": 0.02657960491115724,
+        "q25": -0.01755441953707418,
+        "q75": 0.039485802004614046
       }
     },
     "eeg_occipital_alpha": {
       "cycle_1": {
-        "n": 2,
-        "median": 0.01658868146837389,
-        "q25": -0.018277064359890682,
-        "q75": 0.05145442729663846
+        "n": 3,
+        "median": 0.002847215809574699,
+        "q25": -0.025147797189290277,
+        "q75": 0.044583694467238866
       },
       "cycle_2": {
-        "n": 2,
-        "median": -0.06517119560345885,
-        "q25": -0.11196382571427999,
-        "q75": -0.018378565492637722
+        "n": 3,
+        "median": 0.01691251909283631,
+        "q25": -0.0709219683661324,
+        "q75": 0.02266329185550986
       }
     },
     "eeg_central_beta": {
       "cycle_1": {
-        "n": 3,
-        "median": -0.0271212021337216,
-        "q25": -0.08865236230195084,
-        "q75": 0.035999541159535964
+        "n": 4,
+        "median": 0.035999541159535964,
+        "q25": -0.05788678221783622,
+        "q75": 0.104440020486494
       },
       "cycle_2": {
-        "n": 3,
-        "median": 0.0087202513707616,
-        "q25": -0.1177883599803522,
-        "q75": 0.060508234292822705
+        "n": 4,
+        "median": -0.00033175731079915227,
+        "q25": -0.06811206732713643,
+        "q75": 0.03461424283179215
       }
     },
     "eeg_parietal_beta": {
       "cycle_1": {
-        "n": 3,
-        "median": 0.026738534591319807,
-        "q25": -0.04563954344151444,
-        "q75": 0.032951887228763965
+        "n": 4,
+        "median": 0.032951887228763965,
+        "q25": -0.009450504425097317,
+        "q75": 0.0436410117286008
       },
       "cycle_2": {
-        "n": 3,
-        "median": -0.04640218293655596,
-        "q25": -0.1432450909355465,
-        "q75": 0.002824273611784056
+        "n": 4,
+        "median": 0.002824273611784056,
+        "q25": -0.09482363693605123,
+        "q75": 0.05472562589730162
       }
     }
   },
@@ -116,162 +117,178 @@
       "1": {
         "p01": 0.052,
         "p02": 0.037,
-        "p03": -0.046
+        "p03": -0.046,
+        "p04": -0.01
       },
       "2": {
         "p01": 0.109,
         "p02": 0.025,
-        "p03": -0.115
+        "p03": -0.115,
+        "p04": 0.024
       }
     },
     "eeg_frontal_alpha": {
       "1": {
         "p01": -0.03,
         "p02": 0.036,
-        "p03": -0.186
+        "p03": -0.186,
+        "p04": -0.083
       },
       "2": {
         "p01": -0.023,
         "p02": 0.023,
-        "p03": -0.181
+        "p03": -0.181,
+        "p04": -0.032
       }
     },
     "eeg_central_alpha": {
       "1": {
         "p01": -0.056,
         "p02": 0.055,
-        "p03": -0.11
+        "p03": -0.11,
+        "p04": -0.061
       },
       "2": {
         "p01": -0.037,
         "p02": 0.021,
-        "p03": -0.15
+        "p03": -0.15,
+        "p04": -0.021
       }
     },
     "eeg_parietal_alpha": {
       "1": {
         "p01": 0.046,
         "p02": 0.071,
-        "p03": -0.054
+        "p03": -0.054,
+        "p04": -0.042
       },
       "2": {
         "p01": 0.021,
         "p02": 0.061,
-        "p03": -0.133
+        "p03": -0.133,
+        "p04": 0.032
       }
     },
     "eeg_occipital_alpha": {
       "1": {
         "p01": NaN,
         "p02": 0.086,
-        "p03": -0.053
+        "p03": -0.053,
+        "p04": 0.003
       },
       "2": {
         "p01": NaN,
         "p02": 0.028,
-        "p03": -0.159
+        "p03": -0.159,
+        "p04": 0.017
       }
     },
     "eeg_central_beta": {
       "1": {
         "p01": -0.027,
         "p02": 0.099,
-        "p03": -0.15
+        "p03": -0.15,
+        "p04": 0.12
       },
       "2": {
         "p01": 0.112,
         "p02": 0.009,
-        "p03": -0.244
+        "p03": -0.244,
+        "p04": -0.009
       }
     },
     "eeg_parietal_beta": {
       "1": {
         "p01": 0.039,
         "p02": 0.027,
-        "p03": -0.118
+        "p03": -0.118,
+        "p04": 0.057
       },
       "2": {
         "p01": 0.052,
         "p02": -0.046,
-        "p03": -0.24
+        "p03": -0.24,
+        "p04": 0.063
       }
     }
   },
   "departure_recovery_band2": {
     "eeg_frontal_theta_cycle_1": {
       "not_estimable": 3,
-      "departed": 0
+      "returned": 1,
+      "departed": 1
     },
     "eeg_frontal_theta_cycle_2": {
-      "not_estimable": 2,
+      "not_estimable": 3,
       "ambiguous_timing": 1,
       "departed": 0
     },
     "eeg_frontal_alpha_cycle_1": {
       "returned": 2,
-      "not_estimable": 1,
+      "not_estimable": 2,
       "departed": 2
     },
     "eeg_frontal_alpha_cycle_2": {
-      "not_estimable": 1,
+      "not_estimable": 2,
       "ambiguous_timing": 1,
       "returned": 1,
       "departed": 1
     },
     "eeg_central_alpha_cycle_1": {
       "not_estimable": 2,
-      "returned": 1,
-      "departed": 1
+      "returned": 2,
+      "departed": 2
     },
     "eeg_central_alpha_cycle_2": {
-      "not_estimable": 1,
+      "not_estimable": 2,
       "ambiguous_timing": 1,
       "returned": 1,
       "departed": 1
     },
     "eeg_parietal_alpha_cycle_1": {
-      "not_estimable": 2,
+      "not_estimable": 3,
       "returned": 1,
       "departed": 1
     },
     "eeg_parietal_alpha_cycle_2": {
-      "not_estimable": 1,
+      "not_estimable": 2,
       "ambiguous_timing": 1,
       "returned": 1,
       "departed": 1
     },
     "eeg_occipital_alpha_cycle_1": {
-      "not_estimable": 1,
+      "not_estimable": 2,
       "returned": 1,
       "censored": 1,
       "departed": 2
     },
     "eeg_occipital_alpha_cycle_2": {
-      "not_estimable": 1,
+      "not_estimable": 2,
       "ambiguous_timing": 1,
       "censored": 1,
       "departed": 1
     },
     "eeg_central_beta_cycle_1": {
+      "returned": 2,
       "not_estimable": 1,
-      "returned": 1,
       "censored": 1,
-      "departed": 2
+      "departed": 3
     },
     "eeg_central_beta_cycle_2": {
       "returned": 1,
       "ambiguous_timing": 1,
       "censored": 1,
+      "not_estimable": 1,
       "departed": 2
     },
     "eeg_parietal_beta_cycle_1": {
-      "not_estimable": 1,
+      "not_estimable": 2,
       "returned": 1,
       "censored": 1,
       "departed": 2
     },
     "eeg_parietal_beta_cycle_2": {
-      "not_estimable": 1,
+      "not_estimable": 2,
       "ambiguous_timing": 1,
       "censored": 1,
       "departed": 1
@@ -284,25 +301,28 @@
     "eeg_parietal_alpha": 0,
     "eeg_occipital_alpha": 3,
     "eeg_central_beta": 3,
-    "eeg_parietal_beta": 3
+    "eeg_parietal_beta": 4
   },
-  "matched_bins": 518,
-  "matched_participants": 3,
+  "matched_bins": 696,
+  "matched_participants": 4,
   "within_participant_spearman_eeg_vs_abs_err": {
     "eeg_parietal_alpha": {
       "p01": 0.30422192085541744,
       "p02": 0.0832869722643401,
-      "p03": -0.10186769709666427
+      "p03": -0.10186769709666427,
+      "p04": 0.21849826318931642
     },
     "eeg_frontal_theta": {
       "p01": 0.12735792815184102,
       "p02": 0.038017638358822325,
-      "p03": 0.004938541453858806
+      "p03": 0.004938541453858806,
+      "p04": 0.09481674965698919
     },
     "eeg_central_beta": {
       "p01": -0.043248671752883126,
       "p02": -0.07194125445744542,
-      "p03": -0.13297920977881772
+      "p03": -0.13297920977881772,
+      "p04": 0.13352923571414146
     }
   }
 }
