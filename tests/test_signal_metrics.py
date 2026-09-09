@@ -101,3 +101,12 @@ def test_response_magnitude_and_eeg_features():
     x2 = x.copy(); x2[:, fs * 12:fs * 13] += 500
     f2 = eeg_bin_features(eeg_preprocess(x2, fs), fs, names, 10, 20)
     assert not f2["eeg_ok"] and np.isnan(f2["eeg_frontal_theta"])
+
+
+def test_recovery_residual_uses_last_valid_bin_within_30s():
+    from myndos.metrics import recovery
+    t = np.arange(10, 370, 10.0); z = np.linspace(5, 0.5, t.size); z[-1] = np.nan  # final snapshot missing
+    r = recovery(z, t, band=2.0, k=3, excursion=True)
+    assert np.isclose(r["residual_360"], z[-2]) and np.isclose(r["residual_60"], z[5])
+    z[-3:] = np.nan
+    assert np.isnan(recovery(z, t, band=2.0, k=3, excursion=True)["residual_360"])  # nothing within 30 s

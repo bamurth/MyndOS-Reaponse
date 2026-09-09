@@ -75,7 +75,8 @@ def recovery(z: np.ndarray, t_rel: np.ndarray, band: float = 2.0, k: int = 3,
              residual_at: tuple[float, ...] = (60.0, 180.0, 360.0), excursion: bool = True) -> dict:
     """Recovery metrics on a recovery segment (t_rel = seconds since demand decreased).
 
-    * residual_<s>: z of the bin ending at (or the last bin ending at/before) s.
+    * residual_<s>: z of the last *valid* bin ending in (s - 30, s]; NaN if none (a missing final
+      snapshot must not erase the endpoint, but nothing older than 30 s may stand in for it).
     * return_time: end time of the first run of ``k`` consecutive *valid* bins
       with |z| <= band. Missing bins break the run.
     * status: 'returned', 'censored' (no return before the segment ends),
@@ -85,8 +86,8 @@ def recovery(z: np.ndarray, t_rel: np.ndarray, band: float = 2.0, k: int = 3,
     out = {"return_time": np.nan, "status": "not_estimable" if not excursion else "censored",
            "observed_duration": float(t_rel[-1]) if t_rel.size else np.nan}
     for s in residual_at:
-        m = np.flatnonzero(t_rel <= s + 1e-9)
-        out[f"residual_{int(s)}"] = float(z[m[-1]]) if m.size and np.isfinite(z[m[-1]]) else np.nan
+        m = np.flatnonzero((t_rel <= s + 1e-9) & (t_rel > s - 30.0 + 1e-9) & np.isfinite(z))
+        out[f"residual_{int(s)}"] = float(z[m[-1]]) if m.size else np.nan
     if not excursion:
         return out
     run = 0
