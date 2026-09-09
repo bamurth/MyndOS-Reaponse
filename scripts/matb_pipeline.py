@@ -319,7 +319,9 @@ def fig_added_value(P):
 
 
 # ------------------------------------------------------------------ prediction --------------------------------
-def prediction_test(df: pd.DataFrame, M: pd.DataFrame) -> dict:
+def prediction_test(df: pd.DataFrame, M: pd.DataFrame, eeg_cols: list[str] | None = None, out_csv: str = "results/tables/matb_prediction_participant_mae.csv") -> dict:
+    """Held-out next-30-s task-error prediction. With ``eeg_cols`` the matched multimodal cohort is used and a
+    context+peripheral+EEG model plus its controls are added; run only when >= 20 participants qualify."""
     P = df[df.condition != "quiet_rest"].copy().sort_values(["pid", "t_end"])
     P["y"] = make_targets(P, horizon=30.0, value_col="abs_err")
     g = P.groupby("pid", sort=False)
@@ -333,6 +335,13 @@ def prediction_test(df: pd.DataFrame, M: pd.DataFrame) -> dict:
         P[f"{c}_z"] = [(v - ref.ref_median.get(p, np.nan)) / ref.ref_scale.get(p, np.nan) if p in ref.index and np.isfinite(ref.ref_scale.get(p, np.nan)) and ref.ref_scale.get(p, np.nan) > 0 else np.nan for p, v in zip(P.pid, P[c])]
     ctx = ["is_challenge", "cycle", "elapsed", "seg_index", "perf_last30", "perf_cum", "perf_slope"]
     periph = [f"{c}{s}" for c in ["hr", "eda", "motion", "temp"] for s in ("", "_last30", "_z")] + ["ibi_cov", "hr_e4_raw"]
+    eegf = []
+    if eeg_cols:
+        for c in eeg_cols:
+            P[f"{c}_m3"] = g[c].transform(lambda s: s.rolling(3, min_periods=1).mean())
+            ref = P[P.condition == "working_baseline"].groupby("pid")[c].median()  # pre-challenge personal calibration (disclosed)
+            P[f"{c}_z"] = P[c] - P.pid.map(ref)
+        eegf = eeg_cols + [f"{c}_m3" for c in eeg_cols] + [f"{c}_z" for c in eeg_cols]
     D = P.dropna(subset=["y", "perf_last30"]).copy(); n_pid = D.pid.nunique()
     out = {"n_rows": int(len(D)), "n_participants": int(n_pid), "horizon_s": 30, "seed": SEED,
            "target": "mean RESMAN abs target error over the next 30 s (3 snapshots), within condition",
@@ -346,14 +355,20 @@ def prediction_test(df: pd.DataFrame, M: pd.DataFrame) -> dict:
         return nested_ridge_predict(X, y, pids, n_outer=min(10, n_pid), n_inner=min(5, n_pid - 2), seed=seed)
     preds = {"persistence": D.perf_last30.to_numpy(), "condition_time_only": run(["is_challenge", "cycle", "elapsed", "seg_index"]),
              "context_past_performance": run(ctx), "context_plus_peripheral": run(ctx + periph)}
-    S = shuffle_physiology_across_participants(D.assign(elapsed_bin=(D.elapsed // 30).astype(int)), periph, ["condition", "elapsed_bin"], seed=SEED)
-    preds["control_mismatched_physiology"] = run(ctx + periph, S)
-    T = temporal_shift_within_person(D, periph, shift_bins=3); preds["control_temporal_shift_3bins"] = run(ctx + periph, T)
+    phys = periph + eegf
+    if eegf:
+        preds["context_plus_peripheral_plus_eeg"] = run(ctx + phys); preds["context_plus_eeg_only"] = run(ctx + eegf)
+    S = shuffle_physiology_across_participants(D.assign(elapsed_bin=(D.elapsed // 30).astype(int)), phys, ["condition", "elapsed_bin"], seed=SEED)
+    preds["control_mismatched_physiology"] = run(ctx + phys, S)
+    T = temporal_shift_within_person(D, phys, shift_bins=3); preds["control_temporal_shift_3bins"] = run(ctx + phys, T)
     maes = {k: participant_mae(y, v, pids) for k, v in preds.items()}; ref = maes["context_past_performance"]
     out["participant_weighted_mae"] = {k: {"mean": float(v.mean()), "sd": float(v.std())} for k, v in maes.items()}
     out["paired_difference_vs_context_past_performance"] = {k: paired_bootstrap(v - ref, seed=SEED) for k, v in maes.items() if k != "context_past_performance"}
+    if eegf:
+        out["paired_difference_eeg_vs_peripheral"] = paired_bootstrap(maes["context_plus_peripheral_plus_eeg"] - maes["context_plus_peripheral"], seed=SEED)
+        out["features"] = {"context": ctx, "peripheral": periph, "eeg": eegf}
     out["target_mean"] = float(np.mean(y)); out["target_sd"] = float(np.std(y))
-    pd.DataFrame(maes).to_csv("results/tables/matb_prediction_participant_mae.csv")
+    pd.DataFrame(maes).to_csv(out_csv)
     return out
 
 
@@ -428,6 +443,25 @@ def main(only: list[str] | None = None):
                 if ok.sum() >= 5:
                     r = stats.spearmanr(x[ok], y[ok]); assoc[f"{c}_{x_name}_vs_abs_err_challenge_{cyc}"] = {"n": int(ok.sum()), "spearman_rho": float(r.statistic), "p": float(r.pvalue)}
     S["burden_vs_performance_spearman"] = assoc
+    # EXPLORATORY (not in the frozen plan; added 2026-09-09 23:00 UTC after the frozen outputs): do individual differences in
+    # physiological response relate to how fast task performance recovers? Behavioural recovery = return_time of abs_err at
+    # band 2; right-censored participants are compared as a group (Mann-Whitney on burden) and Spearman is computed among returners.
+    from scipy.stats import mannwhitneyu
+    ex = {}
+    for cyc in (1, 2):
+        beh = M[(M.feature == "abs_err") & (M.cycle == cyc)].set_index("pid")
+        for c in ["hr", "eda", "motion"]:
+            for x_name in ("burden", "resp_phys"):
+                x = M[(M.feature == c) & (M.cycle == cyc)].set_index("pid")[x_name].reindex(beh.index)
+                ret = beh["status_b2.0"] == "returned"; cen = beh["status_b2.0"] == "censored"
+                ok = x.notna()
+                d = {"n_returned": int((ret & ok).sum()), "n_censored": int((cen & ok).sum())}
+                if (ret & ok).sum() >= 5:
+                    r = stats.spearmanr(x[ret & ok], beh.loc[ret & ok, "return_time_b2.0"]); d["spearman_rho_vs_return_time_returners"] = float(r.statistic); d["p"] = float(r.pvalue)
+                if (ret & ok).sum() >= 3 and (cen & ok).sum() >= 3:
+                    u = mannwhitneyu(x[ret & ok], x[cen & ok]); d["median_returned"] = float(x[ret & ok].median()); d["median_censored"] = float(x[cen & ok].median()); d["mannwhitney_p"] = float(u.pvalue)
+                ex[f"{c}_{x_name}_cycle_{cyc}"] = d
+    S["EXPLORATORY_individual_differences_physiology_vs_behavioural_recovery"] = {"label": "exploratory, not pre-registered; 24 tests, no correction", "results": ex}
     S["prediction"] = prediction_test(df, M)
     json.dump(S, open("results/tables/matb_summary.json", "w"), indent=2, default=float)
     # ---- figures

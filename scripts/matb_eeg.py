@@ -209,11 +209,20 @@ def cohort():
     S["departure_recovery_band2"] = {f"{c}_cycle_{cyc}": M[(M.feature == c) & (M.cycle == cyc)]["status_b2.0"].value_counts().to_dict() | {"departed": int(np.isfinite(M[(M.feature == c) & (M.cycle == cyc)]["t_depart_b2.0"]).sum())} for c in EEG_FEATS for cyc in (1, 2)}
     S["scale_flags"] = {c: int(M[(M.feature == c) & (M.cycle == 1)].scale_flag.sum()) for c in EEG_FEATS}
     if W is not None:
-        Wm = W[W.pid.isin(E.pid.unique())][["pid", "condition", "t_end", "hr", "eda", "abs_err"]].copy(); Wm["t_end_nominal"] = Wm.t_end.round(1)
+        wcols = ["pid", "condition", "t_end", "elapsed", "seg_index", "cycle", "hr", "hr_e4_raw", "ibi_cov", "eda", "motion", "temp", "abs_err"]
+        Wm = W[W.pid.isin(E.pid.unique())][[c for c in wcols if c in W.columns]].copy(); Wm["t_end_nominal"] = Wm.t_end.round(1)
         E2 = E.copy(); E2["t_end_nominal"] = E2.t_end_nominal.round(1)
-        J = E2.merge(Wm.drop(columns=["t_end"]), on=["pid", "condition", "t_end_nominal"], how="inner", suffixes=("", "_wrist"))
+        J = E2.merge(Wm.drop(columns=["t_end", "elapsed", "seg_index", "cycle"]), on=["pid", "condition", "t_end_nominal"], how="inner", suffixes=("", "_wrist"))
         J.to_parquet("data/features/matb_multimodal_bins.parquet")
         S["matched_bins"] = int(len(J)); S["matched_participants"] = int(J.pid.nunique())
+        # matched-cohort added-value test with EEG (PLAN.md: only with >= 20 usable participants; otherwise insufficient-N)
+        if J.pid.nunique() >= 20:
+            import matb_pipeline as mp
+            Mw = pd.read_csv("results/tables/matb_participant_metrics.csv")
+            S["prediction_with_eeg"] = mp.prediction_test(J, Mw, eeg_cols=[c for c in EEG_FEATS if c != "eeg_occipital_alpha"], out_csv="results/tables/matb_eeg_prediction_participant_mae.csv")
+            S["prediction_with_eeg"]["cohort"] = "matched EEG+wrist+behaviour bins on the nominal task clock"
+        else:
+            S["prediction_with_eeg"] = {"status": f"NOT RUN: matched EEG cohort N={J.pid.nunique()} < 20 (insufficient-N); descriptives only, per PLAN.md"}
         # within-participant Spearman between EEG features and concurrent task error across all task bins (descriptive only)
         from scipy import stats
         rho = {}

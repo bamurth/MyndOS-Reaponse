@@ -1287,6 +1287,119 @@
       "p": 0.8781319242035421
     }
   },
+  "EXPLORATORY_individual_differences_physiology_vs_behavioural_recovery": {
+    "label": "exploratory, not pre-registered; 24 tests, no correction",
+    "results": {
+      "hr_burden_cycle_1": {
+        "n_returned": 17,
+        "n_censored": 10,
+        "spearman_rho_vs_return_time_returners": 0.11165652576805134,
+        "p": 0.6696388678137641,
+        "median_returned": 392.97499999999786,
+        "median_censored": 391.4705305090349,
+        "mannwhitney_p": 0.436421946107136
+      },
+      "hr_resp_phys_cycle_1": {
+        "n_returned": 20,
+        "n_censored": 10,
+        "spearman_rho_vs_return_time_returners": 0.006028651427153558,
+        "p": 0.9798754757925621,
+        "median_returned": 1.1920000000000073,
+        "median_censored": 0.09649999999999181,
+        "mannwhitney_p": 0.17965400824498112
+      },
+      "eda_burden_cycle_1": {
+        "n_returned": 22,
+        "n_censored": 12,
+        "spearman_rho_vs_return_time_returners": 0.019830142908972413,
+        "p": 0.9302021058172132,
+        "median_returned": 1007.2081485380724,
+        "median_censored": 210.74837499999984,
+        "mannwhitney_p": 0.10106627292864304
+      },
+      "eda_resp_phys_cycle_1": {
+        "n_returned": 22,
+        "n_censored": 12,
+        "spearman_rho_vs_return_time_returners": 0.21201899229318252,
+        "p": 0.34351740770993483,
+        "median_returned": 0.04628012499999999,
+        "median_censored": 0.009448374999999995,
+        "mannwhitney_p": 0.5282022985232859
+      },
+      "motion_burden_cycle_1": {
+        "n_returned": 22,
+        "n_censored": 12,
+        "spearman_rho_vs_return_time_returners": -0.21529869444027194,
+        "p": 0.3359275984516034,
+        "median_returned": 535.5884427793285,
+        "median_censored": 577.5773551074574,
+        "mannwhitney_p": 0.4384541745468946
+      },
+      "motion_resp_phys_cycle_1": {
+        "n_returned": 22,
+        "n_censored": 12,
+        "spearman_rho_vs_return_time_returners": -0.4662916461166942,
+        "p": 0.028710854315654667,
+        "median_returned": 0.025883221542664474,
+        "median_censored": -0.07689837403968058,
+        "mannwhitney_p": 0.04173844084262794
+      },
+      "hr_burden_cycle_2": {
+        "n_returned": 15,
+        "n_censored": 11,
+        "spearman_rho_vs_return_time_returners": -0.1692224742369671,
+        "p": 0.5465672405288804,
+        "median_returned": 532.7341015428065,
+        "median_censored": 617.226821192828,
+        "mannwhitney_p": 0.3776152433844582
+      },
+      "hr_resp_phys_cycle_2": {
+        "n_returned": 16,
+        "n_censored": 12,
+        "spearman_rho_vs_return_time_returners": -0.25630332803412764,
+        "p": 0.33796812983210994,
+        "median_returned": -1.5035000000000167,
+        "median_censored": 0.9092500000000001,
+        "mannwhitney_p": 0.36532513369196684
+      },
+      "eda_burden_cycle_2": {
+        "n_returned": 20,
+        "n_censored": 14,
+        "spearman_rho_vs_return_time_returners": -0.5333486385528946,
+        "p": 0.0154482062293721,
+        "median_returned": 1776.4019999999998,
+        "median_censored": 255.89962500000007,
+        "mannwhitney_p": 0.03733641592066288
+      },
+      "eda_resp_phys_cycle_2": {
+        "n_returned": 20,
+        "n_censored": 14,
+        "spearman_rho_vs_return_time_returners": -0.4409217438036714,
+        "p": 0.05166193208670007,
+        "median_returned": 0.024981500000000004,
+        "median_censored": 0.00592525,
+        "mannwhitney_p": 0.7661321051695728
+      },
+      "motion_burden_cycle_2": {
+        "n_returned": 20,
+        "n_censored": 14,
+        "spearman_rho_vs_return_time_returners": -0.2045513244450022,
+        "p": 0.3869952562897247,
+        "median_returned": 629.0582616887446,
+        "median_censored": 642.6610902720475,
+        "mannwhitney_p": 0.9025232501776794
+      },
+      "motion_resp_phys_cycle_2": {
+        "n_returned": 20,
+        "n_censored": 14,
+        "spearman_rho_vs_return_time_returners": 0.20000573945733546,
+        "p": 0.3978591569321395,
+        "median_returned": 0.008541139056359226,
+        "median_censored": 0.018120173827816777,
+        "mannwhitney_p": 0.43108520748661294
+      }
+    }
+  },
   "prediction": {
     "n_rows": 5743,
     "n_participants": 35,
