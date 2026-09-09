@@ -1,5 +1,23 @@
 # STATUS
 
+## 2026-09-09 21:10 UTC — PRIMARY dataset access restored; Checkpoint 1 INTERIM (partial cohort, download in progress)
+- physionet.org is now allowed by the network policy, but the site served an **expired Let's Encrypt certificate**
+  (notAfter 2026-09-09 20:22:45 UTC; container clock verified against external HTTP Date headers). The owner authorised
+  certificate-check bypass for these public files only (no credentials involved); integrity relies on the official
+  SHA256SUMS.txt: **all 48 files fetched so far verify OK** (results/audit/matb_SHA256SUMS_verified.txt). Not on AWS Open Data.
+- Read README.txt, LICENSE.txt (ODbL), SHA256SUMS.txt (383 entries), directory listings: 35 participants (p14, p23 absent),
+  `MATB-II/pXXresman.csv` (35 files, 6.3-6.8 KB), `PPG/pXX/{ACC,BVP,EDA,HR,IBI,TEMP,tags}.csv+info.txt`,
+  `EEGfNIRSeye_*/pXX/pXX.csv` (p01 = 606,286,984 B).
+- MATB-II format verified and parser implemented (`myndos.io_matb.read_matb_resman`): ELAPSED_TIME mm:ss.s at a 10-s
+  cadence from working start, TANK_A-D, DIFF_A/B == TANK-2500 in every file; 179-180 rows (29:50-30:00). p01 E4 tag sits
+  61.6 s after session start, HR.csv starts +10 s, task time zero = tag (rule frozen).
+- Real-data QC finding: vendor HR.csv keeps emitting values with no pulse in the PPG (p01: 100-165 bpm with 1.5 % accepted
+  beats; raw BVP shows no waveform for p01/p02). HR bins are therefore gated by accepted-beat (IBI) coverage >= 50 %.
+- Interim run on the 20 participants downloaded at that time: all usable, N=20 prediction test executed. Numbers in
+  results/tables/matb_* are INTERIM and will be overwritten by the full-cohort run.
+- Downloads in progress: remaining PPG folders (~1.4 MB each), then EEG p01 (606 MB). 8 GB cap: ~0.7 GB projected for 5 EEG participants.
+
+
 Updated: 2026-09-09 21:15 UTC (checkpoint 3, final for tonight: BIOT audit run; all deliverables except the blocked primary dataset)
 
 ## Environment

@@ -1,9 +1,12 @@
-"""Empatica E4 and MATB-II loaders for the PRIMARY dataset (neuro-stress-resilience-hci).
+"""Empatica E4 and MATB-II loaders for the PRIMARY dataset (neuro-stress-resilience-hci 1.0.0).
 
-STATUS: the primary dataset was unreachable from the execution environment
-(physionet.org blocked by network policy; not on the AWS mirror). These parsers
-follow the published E4 CSV format and are covered by synthetic tests only.
-They have NOT been run on real primary files. See STATUS.md.
+Verified on real files on 2026-09-09 (see results/audit/matb_alignment_audit.csv):
+* E4 regular files: row 1 = session start (unix s, UTC), row 2 = fs, then samples; ACC has 3 columns.
+  HR.csv starts 10 s after the other files (Empatica's HR warm-up); IBI is irregular and sparse.
+* tags.csv: one unix time per row; README: "Event marker (Working Baseline start)".
+* MATB-II/pXXresman.csv: header ELAPSED_TIME,TANK_A,TANK_B,TANK_C,TANK_D,DIFF_A,DIFF_B (UTF-8 BOM),
+  ELAPSED_TIME as mm:ss.s at a 10-s cadence from the start of the working baseline; 179-180 rows
+  (00:10 .. 29:50/30:00). DIFF_A/B == TANK_A/B - 2500 (the RESMAN target level) in every file checked.
 """
 from __future__ import annotations
 
@@ -64,3 +67,48 @@ def stream_combined_csv_rows(path: str, wanted_rows_1based: list[int]) -> dict[i
                 if len(out) == len(wanted):
                     break
     return out
+
+
+MATB_TARGET_LEVEL = 2500  # RESMAN target for tanks A and B (DIFF_A/B == TANK - 2500 in the released files)
+
+
+def parse_elapsed(s: str) -> float:
+    """'mm:ss.s' or 'hh:mm:ss.s' -> seconds."""
+    parts = str(s).strip().split(":")
+    if len(parts) == 2:
+        return float(parts[0]) * 60.0 + float(parts[1])
+    if len(parts) == 3:
+        return float(parts[0]) * 3600.0 + float(parts[1]) * 60.0 + float(parts[2])
+    raise ValueError(f"unrecognised ELAPSED_TIME {s!r}")
+
+
+def read_matb_resman(path: str) -> pd.DataFrame:
+    """MATB-II RESMAN performance log.
+
+    Returns columns: t_task_s (seconds since working-baseline start), tank_a..tank_d, diff_a, diff_b,
+    abs_err = mean(|diff_a|, |diff_b|) (mean absolute deviation from the 2500 target across the two
+    controlled tanks), and diff_consistent (DIFF == TANK - 2500 for that row).
+    Rows are 10-s snapshots; the "mean absolute target deviation over a fixed interval" of PLAN.md
+    is therefore the mean of the snapshots inside the interval.
+    """
+    raw = pd.read_csv(path, encoding="utf-8-sig")
+    raw.columns = [c.strip().upper() for c in raw.columns]
+    need = ["ELAPSED_TIME", "TANK_A", "TANK_B", "TANK_C", "TANK_D", "DIFF_A", "DIFF_B"]
+    missing = [c for c in need if c not in raw.columns]
+    if missing:
+        raise ValueError(f"{path}: missing columns {missing}; got {list(raw.columns)}")
+    df = pd.DataFrame({"t_task_s": raw["ELAPSED_TIME"].map(parse_elapsed).astype(float)})
+    for c in ["TANK_A", "TANK_B", "TANK_C", "TANK_D", "DIFF_A", "DIFF_B"]:
+        df[c.lower()] = pd.to_numeric(raw[c], errors="coerce").astype(float)
+    df["diff_consistent"] = ((df.diff_a == df.tank_a - MATB_TARGET_LEVEL) & (df.diff_b == df.tank_b - MATB_TARGET_LEVEL))
+    df["abs_err"] = 0.5 * (df.diff_a.abs() + df.diff_b.abs())
+    return df
+
+
+def matb_cadence_anomalies(t: np.ndarray, nominal: float = 10.0, tol: float = 0.5) -> np.ndarray:
+    """Indices i where t[i]-t[i-1] deviates from the nominal cadence by more than tol seconds."""
+    t = np.asarray(t, float)
+    if t.size < 2:
+        return np.array([], dtype=int)
+    d = np.diff(t)
+    return np.flatnonzero(np.abs(d - nominal) > tol) + 1

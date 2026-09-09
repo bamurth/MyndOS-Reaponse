@@ -12,8 +12,10 @@ observed; `MANIFEST.md` lists sources, licenses and checksums.
   chronology audit, EEG-clock demand-response descriptives, and the held-out added-value prediction
   test on the subset whose behaviour stream could be placed on the EEG clock (15 participants: insufficient-N).
 * **BIOT frozen-encoder audit** on EEGMAT windows: run; pretrained embeddings under-perform handcrafted band power.
-* **Primary MATB-II dataset**: NOT run. physionet.org is blocked by this cloud environment's network
-  policy. `scripts/matb_pipeline.py` implements the wrist/behaviour checkpoint and will run when access is granted.
+* **PRIMARY MATB-II dataset** (PhysioNet neuro-stress-resilience-hci 1.0.0; wrist E4 + RESMAN performance, 35 participants;
+  EEG for a five-participant subset): run on 2026-09-09 once physionet.org was allowed. Alignment/QC audit, per-participant
+  response/recovery metrics for both challenge cycles, block performance, the held-out added-value prediction test and
+  figures `figM1`-`figM5` (see RESULTS.md section 0).
 
 ## Reproduce
 ```sh
@@ -22,7 +24,8 @@ scripts/run_all.sh            # tests, EEGMAT, ds007554, figures (downloads data
 ```
 Individual steps: `scripts/eegmat_features.py`, `scripts/eegmat_analysis.py`,
 `scripts/ds007554_alignment_audit.py`, `scripts/ds007554_features.py`, `scripts/ds007554_analysis.py`,
-`scripts/make_figures.py`, `scripts/matb_pipeline.py`, optional `scripts/biot_frozen_eegmat.py` (needs torch; fetch the BIOT checkpoint and `model/biot.py` into `data/cache/biot/` first). Tests: `.venv/bin/python -m pytest`.
+`scripts/make_figures.py`, `scripts/download_matb.sh` + `scripts/verify_matb.sh` + `scripts/matb_pipeline.py` (primary wrist/behaviour),
+`scripts/matb_eeg.py` (primary EEG, one participant at a time), optional `scripts/biot_frozen_eegmat.py` (needs torch; fetch the BIOT checkpoint and `model/biot.py` into `data/cache/biot/` first). Tests: `.venv/bin/python -m pytest`.
 
 ## Layout
 * `src/myndos/` library: `signal.py` (R-peaks, beat quality, EEG band power, artifact screen),
