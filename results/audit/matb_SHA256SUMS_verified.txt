@@ -1,5 +1,9 @@
 EEG_32_Channel_mapping.xyz: OK
-EEGfNIRSeye_p1-p5/p01/p01.csv: FAILED
+EEGfNIRSeye_p1-p5/p01/p01.csv: OK
+EEGfNIRSeye_p1-p5/p02/p02.csv: OK
+EEGfNIRSeye_p1-p5/p03/p03.csv: OK
+EEGfNIRSeye_p1-p5/p04/p04.csv: OK
+EEGfNIRSeye_p1-p5/p05/p05.csv: OK
 LICENSE.txt: OK
 MATB-II/p01resman.csv: OK
 MATB-II/p02resman.csv: OK
@@ -319,4 +323,3 @@ PPG/p37/tags.csv: OK
 README.txt: OK
 demographicCDrisk.csv: OK
 fNIRS_frontal.xyz: OK
-sha256sum: WARNING: 1 computed checksum did NOT match

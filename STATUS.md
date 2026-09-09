@@ -1,6 +1,6 @@
 # STATUS
 
-## 2026-09-09 21:35 UTC — PRIMARY dataset: Checkpoint 1 COMPLETE (wrist + behaviour, full cohort N = 35)
+## 2026-09-09 22:35 UTC — PRIMARY dataset: Checkpoints 1 and 2 COMPLETE (wrist + behaviour N = 35; EEG N = 5)
 - physionet.org allowed by the network policy since this session; the site served an **expired Let's Encrypt certificate**
   (notAfter 2026-09-09 20:22:45 UTC; container clock checked against external HTTP Date headers). The owner authorised
   certificate-check bypass for these public files only (no credentials; `MATB_CURL_INSECURE=1 scripts/download_matb.sh`).
@@ -18,15 +18,16 @@
 - Figures: figM1 (p01 first real baseline/challenge/recovery plot), figM2 cohort event-aligned, figM3 recovery incl. censoring,
   figM4 burden vs performance, figM5 added-value.
 - Disk/download: 34 MB wrist+behaviour; EEG p01 (606 MB) downloading; 8 GB cap → 5 EEG participants ≈ 3 GB projected.
-- Checkpoint 2 (EEG) in progress, 21:45 UTC: p01.csv (606,286,984 B) verified against SHA256SUMS; rows = channels
-  confirmed (504,214 samples at exactly 250 Hz, 2,016.9 s); EEG rows 34-65 in microvolts (retained channels robust SD
-  7-15 uV); the release is already low-passed (no 55-65 Hz power); 5 markers at 203.4, 562.4, 920.5, 1280.1, 1640.1 s
-  = working start + four transitions within -0.9..-3.3 s of the 360-s grid (no quiet-rest marker; EEG starts 203 s
-  before working start). Real-data QC: 15/32 channels rejected for p01 (whole-recording robust SD > 40 uV or p99 > 300 uV
-  or flat: FZ FT7 FT8 FC3 FC4 FC6 C1 CZ C2 CP1 CP2 P8 PO7 PO8 OZ), occipital group empty -> NaN; 176/176 retained-channel
-  bins pass the window screen. p02-p05 EEG files downloading one at a time (~17 min each).
+- Checkpoint 2 (EEG) complete, 22:35 UTC: p01-p05 combined CSVs (577-606 MB each) downloaded one at a time, all SHA256-verified
+  (325/325 files OK overall). Orientation, 250-Hz time row, microvolt units, channel order (xyz file) and marker semantics verified
+  on every file; 5 markers each = working start + 4 transitions. Cross-device chronology: transitions within 3.3 s of the grid
+  for p01/p03/p04/p05; p02's last two markers 50 s early → cycle-2 timing excluded as ambiguous. Whole-recording channel screen
+  rejected 15/32 channels for p01 (occipital group empty), 1-5 for the others; 96.7 % of 884 bins pass the window screen.
+  EEG responses are small and mixed in sign across the five (RESULTS.md 0.7); multimodal prediction NOT RUN (N=5 < 20).
+- Disk: raw primary data 2.9 GB (cap 8 GB), 19 GB free. Nothing deleted.
+- Not done: EEG beyond five participants (feasible; one at a time via scripts/download_matb.sh eeg pXX + scripts/matb_eeg.py pXX).
 
-Updated: 2026-09-09 21:15 UTC (checkpoint 3, final for tonight: BIOT audit run; all deliverables except the blocked primary dataset)
+Updated: 2026-09-09 22:40 UTC (primary dataset checkpoints 1-2 complete; earlier EEGMAT/ds007554/BIOT sections below unchanged)
 
 ## Environment
 - Claude Code cloud session, 4 vCPU, 15 GB RAM, 30 GB writable disk, CPU only.
@@ -75,13 +76,16 @@ RESULTS.md is attributed to the primary dataset.
 - [x] 5. Figures (results/figures/fig1-4, figE1), 9 tests passing, RESULTS.md, MANIFEST.md
 - [x] 6. Optional BIOT frozen-encoder audit run on EEGMAT (results/tables/biot_frozen_eegmat.json): pretrained frozen embeddings worse than handcrafted band power and not better than random weights
 - [x] 7. PRIMARY MATB-II Checkpoint 1: access, checksums, verified parser, audit, cohort metrics, prediction test, figures M1-M5 (21:35 UTC)
-- [ ] 8. PRIMARY MATB-II Checkpoint 2: EEG for five participants, one at a time
+- [x] 8. PRIMARY MATB-II Checkpoint 2: EEG p01-p05, one at a time; audit, metrics, figM6 (22:35 UTC)
 
-## Final state (21:15 UTC)
-- Deliverables present: PLAN.md, README.md, RESULTS.md, MANIFEST.md, requirements.lock.txt, `scripts/run_all.sh`, 9 passing tests,
-  audits in results/audit/, participant/file metrics and JSON summaries in results/tables/, five figures in results/figures/.
-- Usable N: EEGMAT 36 (32 cardiac); ds007554 30 (EEG-clock descriptives), 15 (cardiac+behaviour, event-matched), prediction test insufficient-N.
-- Not delivered: anything from the primary MATB-II dataset (network policy). Recovery dynamics were not measurable on the reachable datasets.
-- Disk: ~6 GB venv (torch), 3.5 GB raw data; 18 GB free. No pre-existing files deleted.
-- To resume: allow physionet.org in the environment network settings, then `scripts/matb_pipeline.py` (after inspecting the MATB-II performance
-  file format, which is unverified) and re-run `scripts/run_all.sh`.
+## Final state (22:40 UTC)
+- Deliverables: PLAN.md, README.md, RESULTS.md (section 0 = PRIMARY), MANIFEST.md, requirements.lock.txt, `scripts/run_all.sh`, 16 passing tests,
+  audits in results/audit/ (incl. matb_alignment_audit.csv, matb_eeg_audit.csv, matb_SHA256SUMS_verified.txt), participant metrics and JSON
+  summaries in results/tables/, figures fig1-4, figE1, figM1-M6 in results/figures/.
+- Usable N, PRIMARY: 35/35 wrist+behaviour (HR after pulse gating: 31 cycle 1, 29 cycle 2); EEG 5 (p02 cycle-2 timing ambiguous).
+  Prediction test run at N = 35 (peripheral adds nothing); multimodal EEG comparison NOT RUN (N = 5 < 20).
+- Earlier tonight (unchanged): EEGMAT 36 (32 cardiac); ds007554 30 / 15 event-matched, prediction insufficient-N; BIOT audit negative.
+- Disk: venv ~1 GB (no torch in this container), raw data 2.9 GB primary (+ EEGMAT/ds007554 not re-downloaded in this container); 19 GB free.
+  No pre-existing files deleted.
+- To extend EEG: `MATB_CURL_INSECURE=1 scripts/download_matb.sh eeg pXX && .venv/bin/python scripts/matb_eeg.py pXX` (one at a time; the
+  TLS bypass is only needed while physionet.org's certificate is expired).

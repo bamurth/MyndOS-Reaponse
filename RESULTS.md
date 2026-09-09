@@ -109,7 +109,40 @@ inside training folds; personal reference from the pre-challenge baseline only (
 controls are indistinguishable from the real pairing). The multimodal (EEG) comparison is left to Checkpoint 2 on the matched five-participant cohort, which is below 20 participants
 and will be labelled insufficient-N.
 
-### 0.7 EEG (Checkpoint 2): see the end of this section once run.
+### 0.7 EEG, Checkpoint 2: five participants (p01-p05), one 600-MB combined file each
+
+Files `EEGfNIRSeye_p1-p5/pXX/pXX.csv` (577-606 MB each; all five SHA256-verified). Orientation verified on every file: row 1 is time in steps of exactly
+0.004 s (250 Hz; 482,341-504,214 samples; 1,929-2,017 s), all 74 rows have equal length, rows 34-65 are 32 EEG channels in the order of
+`EEG_32_Channel_mapping.xyz` (AF3 ... OZ) in **microvolts** (retained channels: robust SD 7-25 µV), rows 66-73 are the eight eye rows (audited, not analysed),
+row 74 carries the markers. The release is already low-passed/notched (55-65 Hz power ≈ 1e-4 of alpha power). Script: `scripts/matb_eeg.py`;
+audit `results/audit/matb_eeg_audit.csv`; tables `results/tables/matb_eeg_{participant_metrics.csv,summary.json}`; Figure M6.
+
+**Markers and cross-device chronology.** Every file has exactly five markers (value 1): working start followed by four transitions. The EEG stream starts
+112-242 s before working start (no quiet-rest marker; the wrist tag has no counterpart marker, so the two clocks are joined only through the working-start
+event on each device). Transition deviations from the 360-s grid: p01 −0.9..−3.3 s, p03 ≤ 0.6 s, p04 1.9-2.3 s, p05 ≤ 0.9 s; **p02's third and fourth
+markers are 50 s early** (intervals 361.8, 358.2, 309.9, 360.1 s), so its cycle-2 timing estimates are excluded as ambiguous (magnitudes kept, flagged).
+Actual markers define the EEG block boundaries; bins never cross them.
+
+**Channel quality (whole-recording screen, frozen before outcomes).** Rejected channels: p01 15/32 (FZ FT7 FT8 FC3 FC4 FC6 C1 CZ C2 CP1 CP2 P8 PO7 PO8 OZ;
+occipital group empty → NaN), p02 1 (C1), p03 5, p04 5, p05 2. Window screen on retained channels: 96.7 % of the 884 bins pass (p04 84 %, others 100 %).
+Parietal-minus-frontal log10 alpha is positive in 3/5 (−0.02..+0.20), a weak plausibility check of the channel order.
+
+**Response magnitude (challenge median − reference A, log10 µV²; five participants, individually):**
+
+| feature | p01 | p02 | p03 | p04 | p05 | median c1 / c2 |
+|---|---|---|---|---|---|---|
+| frontal theta, c1 / c2 | +0.05 / +0.11 | +0.04 / +0.03 | −0.05 / −0.12 | −0.01 / +0.02 | +0.01 / −0.02 | +0.01 / +0.02 |
+| parietal alpha, c1 / c2 | +0.05 / +0.02 | +0.07 / +0.06 | −0.05 / −0.13 | −0.04 / +0.03 | +0.10 / +0.12 | +0.05 / +0.03 |
+| central beta, c1 / c2 | −0.03 / +0.11 | +0.10 / +0.01 | −0.15 / −0.24 | +0.12 / −0.01 | +0.05 / +0.01 | +0.05 / +0.01 |
+
+Changes are small (|Δ| ≤ 0.25 log10) and mixed in sign; the expected pattern (theta up, alpha down under added load) is not consistent across these five.
+Sustained departures at band ±2: frontal theta 1/5 (p04, at 240 s, returned by 30 s), parietal alpha 1/5 (p03, both cycles, returned at 120 s and 50 s),
+central alpha 3/5; everything else not estimable (no excursion). Within-participant Spearman between concurrent parietal alpha and task error over all task bins:
++0.30, +0.08, −0.10, +0.22, +0.12. 874 EEG bins were matched to wrist/behaviour bins on the nominal task clock (`data/features/matb_multimodal_bins.parquet`).
+
+**Matched-cohort added-value comparison with EEG: NOT RUN (insufficient-N, 5 < 20)**; Figure M5 carries the peripheral-only comparison at N = 35. Expanding EEG
+beyond five participants was possible on disk (19 GB free) but not in the time budget; `scripts/download_matb.sh eeg pXX && scripts/matb_eeg.py pXX` adds one
+participant at a time.
 
 ## 1. EEGMAT: EEG + ECG before and during mental arithmetic (N = 36)
 
