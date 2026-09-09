@@ -1,0 +1,23 @@
+# raw data, caches, checkpoints never enter git
+data/raw/
+data/interim/
+data/cache/
+*.edf
+*.zip
+*.csv.gz
+*.parquet
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.ipynb_checkpoints/
+# per-window features can be large; compact aggregates are tracked under results/
+data/features/
