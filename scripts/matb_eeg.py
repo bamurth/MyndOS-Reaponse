@@ -82,6 +82,8 @@ def process(pid: str) -> dict:
     want = [COMBINED_ROWS["time"]] + COMBINED_ROWS["eeg"] + COMBINED_ROWS["eye"] + [COMBINED_ROWS["marker"]]
     rows = stream_combined_csv_rows(path, want)
     a["n_rows_read"] = len(rows); a["rows_missing"] = [r for r in want if r not in rows]
+    if any(r not in rows for r in [COMBINED_ROWS["time"], COMBINED_ROWS["marker"]] + COMBINED_ROWS["eeg"]):
+        a["status"] = f"required rows missing: {a['rows_missing']}"; return a
     t = rows[COMBINED_ROWS["time"]]; n = t.size
     a["n_samples"] = int(n); a["lengths_equal"] = all(rows[r].size == n for r in rows)
     dt = np.diff(t); a["fs"] = float(1 / np.median(dt)); a["time_monotonic"] = bool(np.all(dt > 0)); a["max_time_gap_s"] = float(dt.max()); a["span_s"] = float(t[-1] - t[0])
@@ -106,8 +108,12 @@ def process(pid: str) -> dict:
     if keep.sum() < 8 or any(len(groups_all[g]) == 0 for g in ("frontal", "central", "parietal")):
         a["status"] = f"EEG unusable: {int(keep.sum())} retained channels, groups {list(groups_all)}"
     # plausibility of the channel order: alpha power should be larger over parietal/occipital than frontal in most people
-    eye = np.vstack([rows[r] for r in COMBINED_ROWS["eye"]]); a["eye_rows_nonconstant"] = int((eye.std(axis=1) > 0).sum())
-    a["eye_row_ranges"] = [[float(np.nanmin(e)), float(np.nanmax(e))] for e in eye]
+    eye_rows = [rows[r] for r in COMBINED_ROWS["eye"] if r in rows]
+    if eye_rows:
+        eye = np.vstack(eye_rows); a["eye_rows_nonconstant"] = int((np.nanstd(eye, axis=1) > 0).sum())
+        a["eye_row_ranges"] = [[float(np.nanmin(e)), float(np.nanmax(e))] for e in eye]
+    else:
+        a["eye_rows_nonconstant"] = 0; a["eye_row_ranges"] = []
     mk = rows[COMBINED_ROWS["marker"]]; idx = np.flatnonzero(mk != 0)
     if a.get("status", "").startswith("EEG unusable"):
         return a
@@ -177,7 +183,7 @@ def metrics_for(pid, g, ambiguous_blocks):
 
 
 def cohort():
-    A = pd.read_csv("results/audit/matb_eeg_audit.csv") if os.path.exists("results/audit/matb_eeg_audit.csv") else pd.DataFrame()
+    A = rebuild_audit_csv()
     files = sorted(glob.glob("data/features/matb_eeg_bins_*.parquet"))
     if not files: return
     E = pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)
@@ -234,14 +240,27 @@ def cohort():
     print(pd.DataFrame({c: S["per_participant_response_log10"][c] for c in ["eeg_parietal_alpha", "eeg_frontal_theta", "eeg_central_beta"]}).round(3))
 
 
-def main(pids):
-    A = pd.read_csv("results/audit/matb_eeg_audit.csv") if os.path.exists("results/audit/matb_eeg_audit.csv") else pd.DataFrame()
+AUDIT_DIR = "results/audit/matb_eeg_audit_rows"
+
+
+def rebuild_audit_csv():
+    os.makedirs(AUDIT_DIR, exist_ok=True)
+    rows = [json.load(open(f)) for f in sorted(glob.glob(f"{AUDIT_DIR}/*.json"))]
+    A = pd.DataFrame(rows)
+    if len(A): A.to_csv("results/audit/matb_eeg_audit.csv", index=False)
+    return A
+
+
+def main(pids, run_cohort=True):
+    os.makedirs(AUDIT_DIR, exist_ok=True)
     for pid in pids:
-        a = process(pid); print(pid, {k: a[k] for k in a if k in ("status", "sha256_ok", "n_samples", "fs", "span_s", "n_markers", "marker_times_s", "marker_values", "marker_intervals_s", "eeg_working_start_s", "transition_deviation_s", "eeg_ok_fraction", "flat_channels", "alpha_parietal_minus_frontal_log10", "eeg_filtered_sd_uV_median")})
-        A = pd.concat([A[A.participant != pid] if len(A) else A, pd.DataFrame([a])], ignore_index=True)
-        A.to_csv("results/audit/matb_eeg_audit.csv", index=False)
-    cohort()
+        a = process(pid); print(pid, {k: a[k] for k in a if k in ("status", "sha256_ok", "n_samples", "fs", "span_s", "n_markers", "marker_times_s", "marker_values", "marker_intervals_s", "eeg_working_start_s", "transition_deviation_s", "eeg_ok_fraction", "flat_channels", "alpha_parietal_minus_frontal_log10", "eeg_filtered_sd_uV_median", "n_channels_retained")})
+        json.dump(a, open(f"{AUDIT_DIR}/{pid}.json", "w"), default=float)
+    rebuild_audit_csv()
+    if run_cohort:
+        cohort()
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:] or ["p01"])
+    args = [x for x in sys.argv[1:] if not x.startswith("--")]
+    main(args or ["p01"], run_cohort="--no-cohort" not in sys.argv)
