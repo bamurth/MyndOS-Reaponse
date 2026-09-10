@@ -109,40 +109,45 @@ inside training folds; personal reference from the pre-challenge baseline only (
 controls are indistinguishable from the real pairing). The multimodal (EEG) comparison is left to Checkpoint 2 on the matched five-participant cohort, which is below 20 participants
 and will be labelled insufficient-N.
 
-### 0.7 EEG, Checkpoint 2: five participants (p01-p05), one 600-MB combined file each
+### 0.7 EEG: all 35 participants (Checkpoint 2 completed 2026-09-10 00:20 UTC)
 
-Files `EEGfNIRSeye_p1-p5/pXX/pXX.csv` (577-606 MB each; all five SHA256-verified). Orientation verified on every file: row 1 is time in steps of exactly
-0.004 s (250 Hz; 482,341-504,214 samples; 1,929-2,017 s), all 74 rows have equal length, rows 34-65 are 32 EEG channels in the order of
-`EEG_32_Channel_mapping.xyz` (AF3 ... OZ) in **microvolts** (retained channels: robust SD 7-25 µV), rows 66-73 are the eight eye rows (audited, not analysed),
-row 74 carries the markers. The release is already low-passed/notched (55-65 Hz power ≈ 1e-4 of alpha power). Script: `scripts/matb_eeg.py`;
-audit `results/audit/matb_eeg_audit.csv`; tables `results/tables/matb_eeg_{participant_metrics.csv,summary.json}`; Figure M6.
+Files `EEGfNIRSeye_*/pXX/pXX.csv`, 577-606 MB each, all 35 SHA256-verified before parsing (raw files deleted after feature extraction; features,
+audit rows and checksums kept). Two layouts: 74 rows (eye rows 66-73, markers row 74; p01-p24) and 66 rows (no eye rows, markers row 66;
+p25-p37, whose Tobii data were recorded separately per their Note.txt). Every file: row 1 = time at exactly 0.004 s (250 Hz), equal row lengths,
+EEG rows 34-65 in microvolts, the release already free of 55-65 Hz power. Script `scripts/matb_eeg.py`; audit `results/audit/matb_eeg_audit.csv`
+(+ one JSON row per participant in `results/audit/matb_eeg_audit_rows/`); tables `results/tables/matb_eeg_{participant_metrics.csv,summary.json}`;
+Figure M6 (all 35 traces).
 
-**Markers and cross-device chronology.** Every file has exactly five markers (value 1): working start followed by four transitions. The EEG stream starts
-112-242 s before working start (no quiet-rest marker; the wrist tag has no counterpart marker, so the two clocks are joined only through the working-start
-event on each device). Transition deviations from the 360-s grid: p01 −0.9..−3.3 s, p03 ≤ 0.6 s, p04 1.9-2.3 s, p05 ≤ 0.9 s; **p02's third and fourth
-markers are 50 s early** (intervals 361.8, 358.2, 309.9, 360.1 s), so its cycle-2 timing estimates are excluded as ambiguous (magnitudes kept, flagged).
-Actual markers define the EEG block boundaries; bins never cross them.
+**Markers and chronology (all 35 anchored; none moved).** 30 files have exactly 5 markers (working start + 4 transitions); p11, p15, p25 have 6,
+p26 has 7 (extra early presses, as the participant notes say), p16 has 4 (session stopped after 24 min: challenge 2 truncated, recovery 2 absent).
+Transition deviations from the 360-s grid are within 3.3 s for 28 participants, 4-7 s for p07, p09, p11, p13, p25, and beyond the 10-s ambiguity
+limit for p02 (50.2 s, two boundaries), p18 (10.1 s), p20 (16.1 s, first transition), p28 (13.9 s): those cycles' timing estimates are excluded,
+magnitudes kept and flagged. p20 exposed a brittleness in the anchor rule (a late first press moved the anchor to the third marker); the rule was
+corrected, unit-tested and p20 re-processed (documented in METHODS_AND_QC.md section 2).
 
-**Channel quality (whole-recording screen, frozen before outcomes).** Rejected channels: p01 15/32 (FZ FT7 FT8 FC3 FC4 FC6 C1 CZ C2 CP1 CP2 P8 PO7 PO8 OZ;
-occipital group empty → NaN), p02 1 (C1), p03 5, p04 5, p05 2. Window screen on retained channels: 96.7 % of the 884 bins pass (p04 84 %, others 100 %).
-Parietal-minus-frontal log10 alpha is positive in 3/5 (−0.02..+0.20), a weak plausibility check of the channel order.
+**Channel quality.** Retained channels: median 30/32 (p01 17; all others >= 27). Bins passing the window screen: median 98.9 % (min 83.7 %, p04);
+6,152 bins in total, 96.9 % usable. Parietal-minus-frontal log alpha is positive in 24/35.
 
-**Response magnitude (challenge median − reference A, log10 µV²; five participants, individually):**
+**Response magnitude (challenge median - reference A, log10 uV^2; N = 35 per cell):**
 
-| feature | p01 | p02 | p03 | p04 | p05 | median c1 / c2 |
-|---|---|---|---|---|---|---|
-| frontal theta, c1 / c2 | +0.05 / +0.11 | +0.04 / +0.03 | −0.05 / −0.12 | −0.01 / +0.02 | +0.01 / −0.02 | +0.01 / +0.02 |
-| parietal alpha, c1 / c2 | +0.05 / +0.02 | +0.07 / +0.06 | −0.05 / −0.13 | −0.04 / +0.03 | +0.10 / +0.12 | +0.05 / +0.03 |
-| central beta, c1 / c2 | −0.03 / +0.11 | +0.10 / +0.01 | −0.15 / −0.24 | +0.12 / −0.01 | +0.05 / +0.01 | +0.05 / +0.01 |
+| feature | cycle 1 median | cycle 2 median | departed (band 2) c1 / c2 | returned c1 / c2 |
+|---|---|---|---|---|
+| frontal theta | +0.009 | -0.013 | 6 / 11 | 5 / 11 |
+| parietal alpha | +0.006 | +0.020 | 7 / 10 | 7 / 10 |
+| central alpha | -0.035 | -0.021 | 12 / 9 | 12 / 7 |
+| central beta | +0.028 | +0.003 | 16 / 14 | 13 / 11 |
+| parietal beta | +0.057 | +0.052 | 15 / 17 | 13 / 15 |
 
-Changes are small (|Δ| ≤ 0.25 log10) and mixed in sign; the expected pattern (theta up, alpha down under added load) is not consistent across these five.
-Sustained departures at band ±2: frontal theta 1/5 (p04, at 240 s, returned by 30 s), parietal alpha 1/5 (p03, both cycles, returned at 120 s and 50 s),
-central alpha 3/5; everything else not estimable (no excursion). Within-participant Spearman between concurrent parietal alpha and task error over all task bins:
-+0.30, +0.08, −0.10, +0.22, +0.12. 874 EEG bins were matched to wrist/behaviour bins on the nominal task clock (`data/features/matb_multimodal_bins.parquet`).
+Cohort-median EEG changes are an order of magnitude smaller than the band-2 threshold; the theta-up / alpha-down pattern expected under added load
+is not present at the cohort level, and where a sustained departure occurs it mostly returns within the recovery block (few censored). Beta shows
+the largest and most frequent excursions, consistent with muscle/movement contamination during COMMS responding rather than a cortical effect.
 
-**Matched-cohort added-value comparison with EEG: NOT RUN (insufficient-N, 5 < 20)**; Figure M5 carries the peripheral-only comparison at N = 35. Expanding EEG
-beyond five participants was possible on disk (19 GB free) but not in the time budget; `scripts/download_matb.sh eeg pXX && scripts/matb_eeg.py pXX` adds one
-participant at a time.
+**Bin-level added-value test with EEG (matched cohort, N = 35, 5,597 rows; same protocol as 0.6):** context + past performance MAE 57.8;
++ peripheral 58.3 (+0.57 [+0.13, +1.0]); + peripheral + EEG 59.1 (+1.29 [+0.59, +2.0]); + EEG only 58.3 (+0.49 [-0.42, +1.4]);
+mismatched-physiology control 57.9; temporal-shift control 58.6. **EEG adds nothing to next-30-s error prediction and slightly hurts.**
+
+The participant-level primary experiment (first-cycle dynamics -> second-challenge performance, frozen in
+`configs/primary_experiment_frozen.md`) is reported in RESULTS_SUMMARY.md.
 
 ## 1. EEGMAT: EEG + ECG before and during mental arithmetic (N = 36)
 

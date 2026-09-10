@@ -212,7 +212,9 @@ def cohort():
     if len(A) and "timing_ambiguous_boundaries" in A:
         for r in A.itertuples():
             v = r.timing_ambiguous_boundaries
-            amb[r.participant] = [] if pd.isna(v) or v in ("[]", "") else [x.strip(" '\"") for x in str(v).strip("[]").split(",") if x.strip()]
+            if isinstance(v, (list, tuple, np.ndarray)): amb[r.participant] = [str(x) for x in v]
+            elif v is None or (isinstance(v, float) and np.isnan(v)) or str(v) in ("[]", "", "nan"): amb[r.participant] = []
+            else: amb[r.participant] = [x.strip(" '\"") for x in str(v).strip("[]").split(",") if x.strip()]
     M = pd.DataFrame([m for pid, g in E.groupby("pid") for m in metrics_for(pid, g, amb.get(pid, []))])
     M.to_csv("results/tables/matb_eeg_participant_metrics.csv", index=False)
     # merge with the wrist/behaviour bins on nominal task time (bin end) for the matched cohort
