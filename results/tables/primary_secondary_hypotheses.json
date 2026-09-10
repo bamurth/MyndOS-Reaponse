@@ -1,0 +1,427 @@
+{
+  "A_physiology_at_equivalent_performance": {
+    "controls": [
+      "base_err_last3",
+      "c1_err"
+    ],
+    "hr_resp_vs_y_c2": {
+      "n": 28,
+      "partial_rho": 0.034482758620689655,
+      "p": 0.8617097887880456
+    },
+    "eda_resp_vs_y_c2": {
+      "n": 35,
+      "partial_rho": -0.06162464985994398,
+      "p": 0.7250854349378189
+    },
+    "hr_burden_ch_vs_y_c2": {
+      "n": 28,
+      "partial_rho": -0.19211822660098524,
+      "p": 0.3273779081919887
+    },
+    "eda_burden_ch_vs_y_c2": {
+      "n": 35,
+      "partial_rho": 0.0565826330532213,
+      "p": 0.7468095811474167
+    },
+    "theta_f_resp_vs_y_c2": {
+      "n": 21,
+      "partial_rho": -0.0961038961038961,
+      "p": 0.6785829571667291
+    },
+    "alpha_p_resp_vs_y_c2": {
+      "n": 21,
+      "partial_rho": 0.007792207792207793,
+      "p": 0.9732581834484768
+    },
+    "hr_resp_vs_y_r2_excess": {
+      "n": 28,
+      "partial_rho": 0.25889436234263824,
+      "p": 0.18342097585586303
+    },
+    "eda_resp_vs_y_r2_excess": {
+      "n": 35,
+      "partial_rho": 0.09327731092436976,
+      "p": 0.5940618635018182
+    }
+  },
+  "A_within_performance_tertile_spearman": {
+    "low": {
+      "hr_resp": 0.054545454545454536,
+      "eda_resp": 0.14685314685314685
+    },
+    "mid": {
+      "hr_resp": 0.2,
+      "eda_resp": -0.5363636363636364
+    },
+    "high": {
+      "hr_resp": -0.7333333333333333,
+      "eda_resp": 0.1258741258741259
+    }
+  },
+  "B_cross_system_recovery_timing": {
+    "cycle1_by_modality": {
+      "abs_err": {
+        "returned": 22,
+        "censored": 12,
+        "not_estimable": 1,
+        "return_median_s": 150.0
+      },
+      "hr": {
+        "returned": 14,
+        "censored": 1,
+        "not_estimable": 20,
+        "return_median_s": 85.0
+      },
+      "eda": {
+        "returned": 5,
+        "censored": 14,
+        "not_estimable": 16,
+        "return_median_s": 80.0
+      },
+      "eeg_frontal_theta": {
+        "returned": 1,
+        "censored": 0,
+        "not_estimable": 4,
+        "ambiguous": 0,
+        "return_median_s": 30.0
+      },
+      "eeg_parietal_alpha": {
+        "returned": 1,
+        "censored": 0,
+        "not_estimable": 4,
+        "ambiguous": 0,
+        "return_median_s": 120.0
+      }
+    },
+    "pairwise_return_time_spearman_both_returned": {
+      "abs_err_vs_hr": {
+        "n_both_returned": 9,
+        "spearman": 0.5462377744304117
+      },
+      "abs_err_vs_eda": {
+        "n_both_returned": 4,
+        "spearman": NaN
+      },
+      "hr_vs_eda": {
+        "n_both_returned": 1,
+        "spearman": NaN
+      }
+    },
+    "C_plus_timing_vs_C": {
+      "model": "C_plus_physio_timing",
+      "reference": "C_behaviour",
+      "target": "y_c2",
+      "n": 28,
+      "participants": [
+        "p04",
+        "p05",
+        "p06",
+        "p08",
+        "p09",
+        "p10",
+        "p11",
+        "p12",
+        "p13",
+        "p15",
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21",
+        "p22",
+        "p24",
+        "p25",
+        "p26",
+        "p28",
+        "p29",
+        "p30",
+        "p31",
+        "p32",
+        "p33",
+        "p34",
+        "p35",
+        "p37"
+      ],
+      "features": [
+        "base_err_last3",
+        "base_err_all",
+        "base_slope",
+        "hr_base",
+        "eda_base",
+        "motion_base",
+        "temp_base",
+        "c1_err",
+        "c1_resp",
+        "r1_err",
+        "r1_excess",
+        "r1_resid_end",
+        "r1_return",
+        "r1_censored",
+        "hr_return",
+        "hr_censored",
+        "eda_return",
+        "eda_censored"
+      ],
+      "model_mae": 169.2779275246028,
+      "model_rmse": 207.25850353063728,
+      "model_spearman": 0.7268746579091406,
+      "model_r2_oof": 0.8261075297803614,
+      "ref_mae": 170.1658747926793,
+      "ref_rmse": 230.4037011755296,
+      "ref_spearman": 0.6699507389162561,
+      "ref_r2_oof": 0.7851007186290504,
+      "mae_diff_vs_ref": -0.8879472680765039,
+      "rel_mae_change_vs_ref": -0.0052181277189585155,
+      "paired_bootstrap_mae_diff": {
+        "mean": -0.8879472680765039,
+        "ci_low": -38.993792660760185,
+        "ci_high": 36.90030284407183,
+        "n": 28,
+        "frac_boot_below_zero": 0.5242
+      },
+      "meets_frozen_target_10pct": false,
+      "oof_pred": {
+        "p04": 1334.48,
+        "p05": 530.77,
+        "p06": 144.86,
+        "p08": 927.77,
+        "p09": 374.22,
+        "p10": 395.42,
+        "p11": 2089.57,
+        "p12": 436.65,
+        "p13": 545.91,
+        "p15": 385.58,
+        "p17": 1201.39,
+        "p18": 362.42,
+        "p19": 494.79,
+        "p20": 419.86,
+        "p21": 545.81,
+        "p22": 114.65,
+        "p24": 405.1,
+        "p25": 1342.56,
+        "p26": 612.36,
+        "p28": 883.24,
+        "p29": 92.14,
+        "p30": 317.56,
+        "p31": 280.74,
+        "p32": 67.06,
+        "p33": 413.36,
+        "p34": 1189.37,
+        "p35": 787.26,
+        "p37": 286.62
+      },
+      "oof_ref_pred": {
+        "p04": 1324.22,
+        "p05": 768.17,
+        "p06": -0.97,
+        "p08": 946.82,
+        "p09": 317.01,
+        "p10": 336.18,
+        "p11": 2036.38,
+        "p12": 250.84,
+        "p13": 450.4,
+        "p15": 315.48,
+        "p17": 1210.27,
+        "p18": 211.17,
+        "p19": 629.88,
+        "p20": 532.22,
+        "p21": 442.65,
+        "p22": 112.63,
+        "p24": 299.68,
+        "p25": 1479.98,
+        "p26": 580.32,
+        "p28": 907.2,
+        "p29": 181.97,
+        "p30": 383.97,
+        "p31": 409.89,
+        "p32": 153.48,
+        "p33": 534.11,
+        "p34": 925.03,
+        "p35": 738.43,
+        "p37": 140.88
+      },
+      "jackknife_mae_diff_range": [
+        -40.90413924608878,
+        1.9064560282403642
+      ],
+      "jackknife_most_influential": "p10"
+    },
+    "note": "sensor lags: E4 HR is a vendor 10-s running estimate; EDA slow (seconds); behaviour snapshot every 10 s; EEG zero-phase. Differences < 20 s are within measurement lag."
+  },
+  "C_carryover": {
+    "controls": [
+      "c1_err"
+    ],
+    "r1_resid_end_vs_y_c2": {
+      "n": 35,
+      "partial_rho": 0.4294117647058824,
+      "p": 0.010045516186301178
+    },
+    "r1_excess_vs_y_c2": {
+      "n": 35,
+      "partial_rho": 0.6624649859943978,
+      "p": 1.4561904587468846e-05
+    },
+    "hr_resid_end_vs_y_c2": {
+      "n": 28,
+      "partial_rho": -0.08757525998905309,
+      "p": 0.6576715773569686
+    },
+    "eda_resid_end_vs_y_c2": {
+      "n": 35,
+      "partial_rho": 0.00028011204481792715,
+      "p": 0.99872579579922
+    },
+    "theta_f_burden_rc_vs_y_c2": {
+      "n": 21,
+      "partial_rho": 0.11948051948051949,
+      "p": 0.6059550557298753
+    },
+    "alpha_p_burden_rc_vs_y_c2": {
+      "n": 21,
+      "partial_rho": -0.05714285714285714,
+      "p": 0.8056609740932286
+    },
+    "C_plus_physio_residuals_vs_C": {
+      "model": "C_plus_physio_residuals",
+      "reference": "C_behaviour",
+      "target": "y_c2",
+      "n": 28,
+      "participants": [
+        "p04",
+        "p05",
+        "p06",
+        "p08",
+        "p09",
+        "p10",
+        "p11",
+        "p12",
+        "p13",
+        "p15",
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21",
+        "p22",
+        "p24",
+        "p25",
+        "p26",
+        "p28",
+        "p29",
+        "p30",
+        "p31",
+        "p32",
+        "p33",
+        "p34",
+        "p35",
+        "p37"
+      ],
+      "features": [
+        "base_err_last3",
+        "base_err_all",
+        "base_slope",
+        "hr_base",
+        "eda_base",
+        "motion_base",
+        "temp_base",
+        "c1_err",
+        "c1_resp",
+        "r1_err",
+        "r1_excess",
+        "r1_resid_end",
+        "r1_return",
+        "r1_censored",
+        "hr_resid_end",
+        "eda_resid_end",
+        "hr_burden_rc",
+        "eda_burden_rc"
+      ],
+      "model_mae": 153.63969203374057,
+      "model_rmse": 183.80425896165045,
+      "model_spearman": 0.7723043240284619,
+      "model_r2_oof": 0.8632374464000777,
+      "ref_mae": 170.1658747926793,
+      "ref_rmse": 230.4037011755296,
+      "ref_spearman": 0.6699507389162561,
+      "ref_r2_oof": 0.7851007186290504,
+      "mae_diff_vs_ref": -16.52618275893876,
+      "rel_mae_change_vs_ref": -0.09711807834016867,
+      "paired_bootstrap_mae_diff": {
+        "mean": -16.52618275893876,
+        "ci_low": -61.02598025070581,
+        "ci_high": 25.493539660399925,
+        "n": 28,
+        "frac_boot_below_zero": 0.7868
+      },
+      "meets_frozen_target_10pct": false,
+      "oof_pred": {
+        "p04": 1337.59,
+        "p05": 490.37,
+        "p06": 240.21,
+        "p08": 746.75,
+        "p09": 90.88,
+        "p10": 519.35,
+        "p11": 2108.85,
+        "p12": 140.83,
+        "p13": 726.52,
+        "p15": 904.02,
+        "p17": 1370.25,
+        "p18": 230.05,
+        "p19": 499.81,
+        "p20": 441.75,
+        "p21": 340.53,
+        "p22": 116.54,
+        "p24": 389.09,
+        "p25": 1509.35,
+        "p26": 584.74,
+        "p28": 926.84,
+        "p29": 88.31,
+        "p30": 134.48,
+        "p31": 318.31,
+        "p32": 176.65,
+        "p33": 497.22,
+        "p34": 926.87,
+        "p35": 672.8,
+        "p37": 62.19
+      },
+      "oof_ref_pred": {
+        "p04": 1324.22,
+        "p05": 768.17,
+        "p06": -0.97,
+        "p08": 946.82,
+        "p09": 317.01,
+        "p10": 336.18,
+        "p11": 2036.38,
+        "p12": 250.84,
+        "p13": 450.4,
+        "p15": 315.48,
+        "p17": 1210.27,
+        "p18": 211.17,
+        "p19": 629.88,
+        "p20": 532.22,
+        "p21": 442.65,
+        "p22": 112.63,
+        "p24": 299.68,
+        "p25": 1479.98,
+        "p26": 580.32,
+        "p28": 907.2,
+        "p29": 181.97,
+        "p30": 383.97,
+        "p31": 409.89,
+        "p32": 153.48,
+        "p33": 534.11,
+        "p34": 925.03,
+        "p35": 738.43,
+        "p37": 140.88
+      },
+      "jackknife_mae_diff_range": [
+        -39.338685835002465,
+        14.428402710783727
+      ],
+      "jackknife_most_influential": "p15"
+    },
+    "note": "two sequential cycles in fixed order; carryover is confounded with fatigue, practice and block scripts; no test-retest reliability is implied"
+  }
+}

@@ -12,9 +12,9 @@ import numpy as np, pandas as pd
 from scipy import stats
 import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
 from myndos.metrics import robust_reference, normalize, burden, recovery, first_sustained_departure
-from myndos.modeling import nested_ridge_predict, paired_bootstrap
+from myndos.modeling import nested_ridge_predict_fast as nested_ridge_predict, paired_bootstrap
 
-SEED = 0; ALPHAS = (0.1, 1.0, 10.0, 100.0, 1000.0); N_PERM = int(sys.argv[1]) if len(sys.argv) > 1 else 300; TARGET_REL = 0.10
+SEED = 0; ALPHAS = (0.1, 1.0, 10.0, 100.0, 1000.0); N_PERM = int(sys.argv[1]) if len(sys.argv) > 1 else 500; TARGET_REL = 0.10
 FLOOR = {"hr": 1.0, "eda": 0.02, "motion": 0.02, "temp": 0.05, "abs_err": 5.0}
 df = pd.read_parquet("data/features/matb_bins.parquet")
 R = pd.read_csv("results/tables/recovery_endpoints.csv")
@@ -113,10 +113,13 @@ def metrics(y, p):
     e = np.abs(y - p); return {"mae": float(e.mean()), "rmse": float(np.sqrt(np.mean((y - p) ** 2))), "spearman": float(stats.spearmanr(y, p).statistic), "r2_oof": float(1 - np.sum((y - p) ** 2) / np.sum((y - y.mean()) ** 2))}
 
 
-def compare(F, name, cols, ref_name, ref_cols, y_col, n_perm=0, jackknife=True):
-    """Nested comparison on the participants with complete features for BOTH models (matched subset)."""
+def compare(F, name, cols, ref_name, ref_cols, y_col, n_perm=0, jackknife=True, imputed=False):
+    """Nested comparison. Matched subset (default): participants with complete features for BOTH models.
+    imputed=True: all participants with a target; NaN features are median-imputed inside each training fold."""
     need = [c for c in set(cols + ref_cols) if c in F]; missing = [c for c in set(cols + ref_cols) if c not in F]
-    sub = F.dropna(subset=need + [y_col]) if need else F.dropna(subset=[y_col])
+    sub = F.dropna(subset=[y_col]) if imputed else (F.dropna(subset=need + [y_col]) if need else F.dropna(subset=[y_col]))
+    if imputed:
+        keep_feat = [c for c in need if F[c].notna().sum() >= 10]; cols = [c for c in cols if c in keep_feat]; ref_cols = [c for c in ref_cols if c in keep_feat]
     if missing or len(sub) < 10:
         return {"model": name, "reference": ref_name, "status": f"not run (missing features {missing} or n={len(sub)})", "n": int(len(sub))}
     y = sub[y_col].to_numpy(float); p = oof(sub, cols, y_col); pr = oof(sub, ref_cols, y_col)
@@ -151,6 +154,8 @@ def main():
         prev = list(MODELS)[list(MODELS).index(name) - 1]
         ladder.append(compare(F, name, cols, "A_context" if prev == "A_context" else prev, MODELS[prev], "y_c2", n_perm=0, jackknife=False))
     res["ladder_vs_previous_model"] = ladder
+    res["ladder_all_participants_imputed"] = [compare(F, n, MODELS[n], "A_context" if i == 0 else list(MODELS)[i], MODELS[list(MODELS)[i]], "y_c2", imputed=True, jackknife=False) for i, n in enumerate(list(MODELS)[1:])]
+    res["primary_vs_C_all_participants_imputed"] = {n: compare(F, n, MODELS[n], "C_behaviour", MODELS["C_behaviour"], "y_c2", imputed=True, jackknife=True) for n in ("D_peripheral", "E_eeg", "F_all")}
     key = {}
     for name in ("D_peripheral", "E_eeg", "F_all"):
         key[name] = compare(F, name, MODELS[name], "C_behaviour", MODELS["C_behaviour"], "y_c2", n_perm=N_PERM, jackknife=True)
@@ -255,7 +260,9 @@ def main():
     for n, k in key.items():
         if "model_mae" in k: print(f"{n}: n={k['n']} MAE {k['model_mae']:.1f} vs C {k['ref_mae']:.1f} rel {k['rel_mae_change_vs_ref']:+.1%} CI[{k['paired_bootstrap_mae_diff']['ci_low']:+.1f},{k['paired_bootstrap_mae_diff']['ci_high']:+.1f}] perm p={k.get('permutation', {}).get('p_value_one_sided_improvement')} rho {k['model_spearman']:.2f} vs {k['ref_spearman']:.2f} jackknife {k.get('jackknife_mae_diff_range')} target_met={k['meets_frozen_target_10pct']}")
         else: print(n, k)
-    print("A vs C:", {k: res["A_vs_C"][k] for k in ("model_mae", "ref_mae", "rel_mae_change_vs_ref")}); print("B vs C:", {k: res["B_vs_C"][k] for k in ("model_mae", "ref_mae", "rel_mae_change_vs_ref")})
+    print("A vs C:", {k: res["A_vs_C"][k] for k in ("n", "model_mae", "ref_mae", "rel_mae_change_vs_ref")}); print("B vs C:", {k: res["B_vs_C"][k] for k in ("n", "model_mae", "ref_mae", "rel_mae_change_vs_ref")})
+    print("ladder all-35 imputed:", [(x["model"], x["n"], round(x["model_mae"]), round(x["ref_mae"]), round(x["rel_mae_change_vs_ref"], 3)) for x in res["ladder_all_participants_imputed"]])
+    print("vs C all-35 imputed:", {n: (x["n"], round(x["model_mae"]), round(x["ref_mae"]), round(x["rel_mae_change_vs_ref"], 3), round(x["paired_bootstrap_mae_diff"]["ci_low"]), round(x["paired_bootstrap_mae_diff"]["ci_high"])) for n, x in res["primary_vs_C_all_participants_imputed"].items()})
     print("controls:", {k: (v.get("rel_mae_change_vs_ref"), v.get("n")) for k, v in res["controls"].items()}); print("missingness:", {k: (v.get("rel_mae_change_vs_ref"), v.get("n")) for k, v in res["missingness"].items() if isinstance(v, dict)})
     print("ablation:", abl.get("mae")); print(S.round(1).to_string())
     print("secondary A:", json.dumps(sec["A_physiology_at_equivalent_performance"], default=float)); print("secondary B:", json.dumps(sec["B_cross_system_recovery_timing"]["cycle1_by_modality"], default=float), sec["B_cross_system_recovery_timing"]["pairwise_return_time_spearman_both_returned"], {k: sec["B_cross_system_recovery_timing"]["C_plus_timing_vs_C"].get(k) for k in ("rel_mae_change_vs_ref", "n")})

@@ -290,4 +290,7 @@ def main(pids, run_cohort=True):
 
 if __name__ == "__main__":
     args = [x for x in sys.argv[1:] if not x.startswith("--")]
-    main(args or ["p01"], run_cohort="--no-cohort" not in sys.argv)
+    if "--cohort-only" in sys.argv:
+        rebuild_audit_csv(); cohort()
+    else:
+        main(args or ["p01"], run_cohort="--no-cohort" not in sys.argv)

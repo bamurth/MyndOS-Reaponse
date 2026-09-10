@@ -38,3 +38,12 @@ def test_participant_folds_disjoint():
     pids = np.array(["a"] * 5 + ["b"] * 5 + ["c"] * 5 + ["d"] * 5)
     for tr, te in participant_folds(pids, n_splits=4, seed=0):
         assert set(pids[tr]).isdisjoint(set(pids[te]))
+
+
+def test_fast_nested_ridge_matches_sklearn_version():
+    from myndos.modeling import nested_ridge_predict, nested_ridge_predict_fast
+    rng = np.random.default_rng(3); n, k = 30, 6
+    X = rng.normal(size=(n, k)); X[rng.random((n, k)) < 0.1] = np.nan; y = X[:, 0] * 2 + rng.normal(size=n); y[np.isnan(y)] = 0
+    y = np.nan_to_num(y); pids = np.array([f"p{i}" for i in range(n)])
+    a = nested_ridge_predict(X, y, pids, n_outer=n, n_inner=5, seed=0); b = nested_ridge_predict_fast(X, y, pids, n_outer=n, n_inner=5, seed=0)
+    assert np.allclose(a, b, atol=1e-6)

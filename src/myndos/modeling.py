@@ -113,3 +113,36 @@ def temporal_shift_within_person(df: pd.DataFrame, phys_cols: list[str], shift_b
         g = g.sort_values("t_end")
         out.loc[g.index, phys_cols] = np.roll(g[phys_cols].to_numpy(), shift_bins, axis=0)
     return out
+
+
+def _ridge_fit_predict(Xtr, ytr, Xte, alpha):
+    """Closed-form ridge with unpenalised intercept on already standardized X (mirrors sklearn Ridge(fit_intercept=True))."""
+    ym = ytr.mean(); A = Xtr.T @ Xtr + alpha * np.eye(Xtr.shape[1]); w = np.linalg.solve(A, Xtr.T @ (ytr - ym))
+    return Xte @ w + ym
+
+
+def _prep(Xtr, Xte):
+    """Median imputation and standardization fitted on the training rows only (same as the sklearn pipeline)."""
+    med = np.nanmedian(Xtr, axis=0); med = np.where(np.isfinite(med), med, 0.0)
+    Xtr = np.where(np.isnan(Xtr), med, Xtr); Xte = np.where(np.isnan(Xte), med, Xte)
+    mu = Xtr.mean(axis=0); sd = Xtr.std(axis=0); sd = np.where(sd > 0, sd, 1.0)
+    return (Xtr - mu) / sd, (Xte - mu) / sd
+
+
+def nested_ridge_predict_fast(X: np.ndarray, y: np.ndarray, pids: np.ndarray, n_outer: int = 10, n_inner: int = 5,
+                              alphas=ALPHAS, seed: int = 0) -> np.ndarray:
+    """Numpy re-implementation of :func:`nested_ridge_predict` (identical folds, imputation, scaling and alpha grid;
+    closed-form solves instead of sklearn pipelines). ~50x faster for permutation/jackknife loops.
+    tests/test_leakage_and_io.py checks agreement with the sklearn version."""
+    X = np.asarray(X, float); y = np.asarray(y, float); pred = np.full(len(y), np.nan)
+    for tr, te in participant_folds(pids, n_outer, seed):
+        inner = participant_folds(pids[tr], n_inner, seed + 1)
+        best, best_mae = None, np.inf
+        for a in alphas:
+            maes = []
+            for itr, ite in inner:
+                Xa, Xb = _prep(X[tr][itr], X[tr][ite]); maes.append(np.mean(np.abs(_ridge_fit_predict(Xa, y[tr][itr], Xb, a) - y[tr][ite])))
+            if np.mean(maes) < best_mae:
+                best, best_mae = a, np.mean(maes)
+        Xa, Xb = _prep(X[tr], X[te]); pred[te] = _ridge_fit_predict(Xa, y[tr], Xb, best)
+    return pred
