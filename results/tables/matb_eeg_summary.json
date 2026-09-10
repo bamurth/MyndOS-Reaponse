@@ -1044,5 +1044,19 @@
       "p36": 0.19777800675547444,
       "p37": 0.01405284506380105
     }
+  },
+  "artifact_vs_condition_and_error": {
+    "eeg_ok_by_block": {
+      "challenge_1": 0.985,
+      "challenge_2": 0.974,
+      "recovery_1": 0.975,
+      "recovery_2": 0.954,
+      "working_baseline": 0.96
+    },
+    "challenge_minus_nonchallenge_ok_fraction_mean": 0.016395947267795998,
+    "within_participant_spearman_badch_vs_abs_err_median": NaN,
+    "n": 35,
+    "ok_fraction_high_minus_low_error_bins_mean": 0.003261611084990742,
+    "wilcoxon_p": 0.6273560500336834
   }
 }

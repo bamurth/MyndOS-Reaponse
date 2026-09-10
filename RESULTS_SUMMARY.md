@@ -39,8 +39,10 @@ in RESULTS.md were done before that plan and are retrospective).
 ## 3. EEG processing outcome (N = 35)
 Median 30/32 channels retained; 96.9 % of 6,152 bins pass the artifact screen; layouts and marker anomalies documented in METHODS_AND_QC.md.
 Cohort-median band-power changes are tiny (|delta| <= 0.06 log10); the theta-up/alpha-down pattern is absent at the cohort level; beta shows the
-most excursions (consistent with muscle activity during COMMS responding). Artifacts vs condition: usable-bin fraction differs by < 3 points across
-blocks (`eeg_ok_fraction_by_block`). Bin-level test: EEG adds nothing to next-30-s error prediction (+1.29 MAE [+0.59, +2.0], RESULTS.md 0.7).
+most excursions (consistent with muscle activity during COMMS responding). Artifacts vs condition: usable-bin fraction by block 96.0 % (baseline), 98.5 / 97.4 % (challenges), 97.5 / 95.4 % (recoveries); challenge
+blocks are slightly cleaner (+1.6 points per participant, Wilcoxon p = 0.019), so artifact rejection cannot manufacture a challenge effect.
+Artifacts vs behaviour: usable-bin fraction in high-error vs low-error bins within participant differs by +0.3 points (p = 0.63) — no relation
+(`matb_eeg_summary.json` artifact_vs_condition_and_error). Bin-level test: EEG adds nothing to next-30-s error prediction (+1.29 MAE [+0.59, +2.0], RESULTS.md 0.7).
 
 ## 4. PRIMARY EXPERIMENT (participant level; frozen plan; `results/tables/primary_model_comparison.json`)
 **Question.** Does first-cycle physiology predict second-challenge performance beyond task context, baseline and first-cycle behaviour?
