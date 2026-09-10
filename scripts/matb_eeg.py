@@ -250,21 +250,21 @@ def cohort():
             rho[c] = {pid: float(stats.spearmanr(g[c], g.abs_err, nan_policy="omit").statistic) for pid, g in J[J.condition != "quiet_rest"].groupby("pid") if g[c].notna().sum() >= 30}
         S["within_participant_spearman_eeg_vs_abs_err"] = rho
     json.dump(S, open("results/tables/matb_eeg_summary.json", "w"), indent=2, default=float)
-    # ---- figure M6: per-participant EEG (parietal alpha, frontal theta) with task error, task clock
-    pids = sorted(E.pid.unique()); fig, axes = plt.subplots(len(pids), 1, figsize=(12, 2.4 * len(pids) + 1), sharex=True, squeeze=False)
-    for ax, pid in zip(axes[:, 0], pids):
-        g = E[E.pid == pid].sort_values("t_end")
+    # ---- figure M6: small multiples, one panel per participant (z of parietal alpha and frontal theta vs reference A), task clock
+    pids = sorted(E.pid.unique()); ncol = 5; nrow = int(np.ceil(len(pids) / ncol))
+    fig, axes = plt.subplots(nrow, ncol, figsize=(3.2 * ncol, 2.0 * nrow), sharex=True, sharey=True, squeeze=False)
+    for ax, pid in zip(axes.ravel(), pids):
+        g = E[E.pid == pid].sort_values("t_end"); base = g[(g.condition == "working_baseline") & (g.elapsed > 180)]
+        for c, col in (("eeg_parietal_alpha", "#1f4e79"), ("eeg_frontal_theta", "#dd8452")):
+            med, sc, _ = robust_reference(base[c].to_numpy()); sc = max(sc, FLOOR) if np.isfinite(sc) else np.nan
+            ax.plot(g.t_end, normalize(g[c].to_numpy(), med, sc), color=col, lw=0.7)
         for cond, gg in g.groupby("condition"):
             if cond.startswith("challenge"): ax.axvspan(gg.t_end.min() - BIN, gg.t_end.max(), color="#f4c7c3", alpha=0.5, lw=0)
-            if cond == "quiet_rest": ax.axvspan(gg.t_end.min() - BIN, gg.t_end.max(), color="#dddddd", alpha=0.5, lw=0)
-        ax.plot(g.t_end, g.eeg_parietal_alpha, color="#1f4e79", lw=1.1, label="parietal log10 alpha (uV^2)")
-        ax.plot(g.t_end, g.eeg_frontal_theta, color="#dd8452", lw=1.1, label="frontal log10 theta (uV^2)")
-        ax.set_ylabel(pid, fontsize=8); ax.text(0.01, 0.85, f"artifact-screened bins: {int(g.eeg_ok.sum())}/{len(g)}", transform=ax.transAxes, fontsize=7)
-        if W is not None:
-            ax2 = ax.twinx(); w = W[W.pid == pid].sort_values("t_end"); ax2.plot(w.t_end, w.abs_err, color="#7f7f7f", lw=0.8, alpha=0.7, label="abs target error (fuel units)"); ax2.set_ylabel("abs err", fontsize=7)
-    axes[0, 0].legend(fontsize=7, loc="upper right"); axes[-1, 0].set_xlabel("seconds since working-baseline start (EEG marker clock; grey = task error on the wrist/MATB clock)")
-    fig.suptitle(f"PRIMARY MATB-II EEG, {len(pids)} participants: 10-s artifact-screened log band power through baseline/challenge/recovery (red = challenge).", fontsize=9)
-    fig.tight_layout(); fig.savefig("results/figures/figM6_eeg_timecourses.png", dpi=150); plt.close(fig)
+        ax.axhspan(-2, 2, color="#a6d96a", alpha=0.15, lw=0); ax.set_title(f"{pid}  ok {int(g.eeg_ok.sum())}/{len(g)}", fontsize=7); ax.tick_params(labelsize=6)
+    for ax in axes.ravel()[len(pids):]: ax.axis("off")
+    axes[0, 0].set_ylim(-8, 8); axes[0, 0].plot([], [], color="#1f4e79", label="parietal alpha (z vs ref A)"); axes[0, 0].plot([], [], color="#dd8452", label="frontal theta (z)"); axes[0, 0].legend(fontsize=6, loc="upper left")
+    fig.suptitle(f"PRIMARY MATB-II EEG, {len(pids)} participants: 10-s artifact-screened log band power standardized to the final 3 min of working baseline (green = +-2 band, red = challenge). x = seconds since working start (EEG marker clock).", fontsize=8)
+    fig.tight_layout(); fig.savefig("results/figures/figM6_eeg_timecourses.png", dpi=130); plt.close(fig)
     print(json.dumps({k: S[k] for k in S if k not in ("per_participant_response_log10",)}, indent=1, default=float))
     print(pd.DataFrame({c: S["per_participant_response_log10"][c] for c in ["eeg_parietal_alpha", "eeg_frontal_theta", "eeg_central_beta"]}).round(3))
 

@@ -80,3 +80,23 @@ def test_combined_csv_row_streaming_skips_unwanted_rows(tmp_path):
     rows = stream_combined_csv_rows(str(p), [COMBINED_ROWS["time"], COMBINED_ROWS["marker"]])
     assert set(rows) == {1, 74} and rows[74][0] == 730 and rows[1][3] == 3
     assert COMBINED_ROWS["eeg"] == list(range(34, 66)) and len(COMBINED_ROWS["eeg"]) == 32
+
+
+def test_primary_features_never_use_bins_after_cutoff():
+    """Leakage guard for scripts/primary_prediction.py: altering every bin after the cutoff must not change any feature."""
+    import sys; sys.path.insert(0, "scripts")
+    import primary_prediction as pp
+    rng = np.random.default_rng(0); rows = []
+    for pid in ("a", "b", "c"):
+        for cond, seg in (("working_baseline", 0), ("challenge_1", 1), ("recovery_1", 2), ("challenge_2", 3), ("recovery_2", 4)):
+            for k in range(36):
+                rows.append({"pid": pid, "condition": cond, "seg_index": seg, "elapsed": 10.0 * (k + 1), "t_end": 360.0 * seg + 10.0 * (k + 1), "cycle": 0,
+                             "abs_err": rng.uniform(20, 300), "hr": rng.uniform(60, 90), "hr_e4_raw": rng.uniform(60, 90), "ibi_cov": 0.9, "eda": rng.uniform(0.1, 1), "motion": rng.uniform(0, 0.5), "temp": 30 + rng.uniform(0, 1)})
+    B = pd.DataFrame(rows)
+    for cutoff in (360, 720, 900, 1080):
+        F1 = pp.build(cutoff=cutoff, bins=B); B2 = B.copy(); late = B2.t_end > cutoff
+        for c in ("abs_err", "hr", "hr_e4_raw", "eda", "motion", "temp"): B2.loc[late, c] = B2.loc[late, c] * 7 + 1000
+        F2 = pp.build(cutoff=cutoff, bins=B2)
+        feat_cols = [c for c in F1.columns if not c.startswith("y_")]
+        pd.testing.assert_frame_equal(F1[feat_cols], F2[feat_cols])
+        assert not F1.y_c2.equals(F2.y_c2)  # the target lives after the cutoff and does change

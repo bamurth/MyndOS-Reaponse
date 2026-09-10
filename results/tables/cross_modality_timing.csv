@@ -1,0 +1,246 @@
+pid,modality,t_depart_s,return_time_s,status
+p01,behaviour (target error),10.0,,censored
+p02,behaviour (target error),30.0,310.0,returned
+p03,behaviour (target error),30.0,30.0,returned
+p04,behaviour (target error),50.0,,censored
+p05,behaviour (target error),150.0,50.0,returned
+p06,behaviour (target error),120.0,250.0,returned
+p07,behaviour (target error),20.0,320.0,returned
+p08,behaviour (target error),10.0,,censored
+p09,behaviour (target error),30.0,110.0,returned
+p10,behaviour (target error),10.0,,censored
+p11,behaviour (target error),40.0,,censored
+p12,behaviour (target error),,,not_estimable
+p13,behaviour (target error),10.0,290.0,returned
+p15,behaviour (target error),30.0,30.0,returned
+p16,behaviour (target error),30.0,,censored
+p17,behaviour (target error),10.0,,censored
+p18,behaviour (target error),40.0,30.0,returned
+p19,behaviour (target error),200.0,200.0,returned
+p20,behaviour (target error),190.0,100.0,returned
+p21,behaviour (target error),20.0,140.0,returned
+p22,behaviour (target error),20.0,70.0,returned
+p24,behaviour (target error),30.0,180.0,returned
+p25,behaviour (target error),10.0,,censored
+p26,behaviour (target error),20.0,280.0,returned
+p27,behaviour (target error),200.0,160.0,returned
+p28,behaviour (target error),40.0,,censored
+p29,behaviour (target error),10.0,80.0,returned
+p30,behaviour (target error),130.0,,censored
+p31,behaviour (target error),40.0,170.0,returned
+p32,behaviour (target error),30.0,40.0,returned
+p33,behaviour (target error),40.0,170.0,returned
+p34,behaviour (target error),20.0,,censored
+p35,behaviour (target error),140.0,320.0,returned
+p36,behaviour (target error),50.0,30.0,returned
+p37,behaviour (target error),20.0,,censored
+p01,"heart rate (wrist, gated)",,,not_estimable
+p02,"heart rate (wrist, gated)",,,not_estimable
+p03,"heart rate (wrist, gated)",,,not_estimable
+p04,"heart rate (wrist, gated)",60.0,230.0,returned
+p05,"heart rate (wrist, gated)",,,not_estimable
+p06,"heart rate (wrist, gated)",110.0,60.0,returned
+p07,"heart rate (wrist, gated)",,,not_estimable
+p08,"heart rate (wrist, gated)",80.0,70.0,returned
+p09,"heart rate (wrist, gated)",10.0,80.0,returned
+p10,"heart rate (wrist, gated)",,,not_estimable
+p11,"heart rate (wrist, gated)",,,not_estimable
+p12,"heart rate (wrist, gated)",10.0,250.0,returned
+p13,"heart rate (wrist, gated)",30.0,320.0,returned
+p15,"heart rate (wrist, gated)",10.0,,censored
+p16,"heart rate (wrist, gated)",,,not_estimable
+p17,"heart rate (wrist, gated)",90.0,90.0,returned
+p18,"heart rate (wrist, gated)",,,not_estimable
+p19,"heart rate (wrist, gated)",70.0,40.0,returned
+p20,"heart rate (wrist, gated)",180.0,110.0,returned
+p21,"heart rate (wrist, gated)",,,not_estimable
+p22,"heart rate (wrist, gated)",,,not_estimable
+p24,"heart rate (wrist, gated)",,,not_estimable
+p25,"heart rate (wrist, gated)",,,not_estimable
+p26,"heart rate (wrist, gated)",320.0,90.0,returned
+p27,"heart rate (wrist, gated)",,,not_estimable
+p28,"heart rate (wrist, gated)",,,not_estimable
+p29,"heart rate (wrist, gated)",160.0,80.0,returned
+p30,"heart rate (wrist, gated)",,,not_estimable
+p31,"heart rate (wrist, gated)",,,not_estimable
+p32,"heart rate (wrist, gated)",140.0,60.0,returned
+p33,"heart rate (wrist, gated)",,,not_estimable
+p34,"heart rate (wrist, gated)",,,not_estimable
+p35,"heart rate (wrist, gated)",220.0,330.0,returned
+p36,"heart rate (wrist, gated)",,,not_estimable
+p37,"heart rate (wrist, gated)",20.0,80.0,returned
+p01,EDA (wrist),,,not_estimable
+p02,EDA (wrist),180.0,340.0,returned
+p03,EDA (wrist),250.0,30.0,returned
+p04,EDA (wrist),,,not_estimable
+p05,EDA (wrist),70.0,,censored
+p06,EDA (wrist),20.0,80.0,returned
+p07,EDA (wrist),,,not_estimable
+p08,EDA (wrist),,,not_estimable
+p09,EDA (wrist),,,not_estimable
+p10,EDA (wrist),,,not_estimable
+p11,EDA (wrist),,,not_estimable
+p12,EDA (wrist),,,not_estimable
+p13,EDA (wrist),50.0,,censored
+p15,EDA (wrist),,,not_estimable
+p16,EDA (wrist),,,not_estimable
+p17,EDA (wrist),,,not_estimable
+p18,EDA (wrist),40.0,30.0,returned
+p19,EDA (wrist),120.0,,censored
+p20,EDA (wrist),110.0,,censored
+p21,EDA (wrist),10.0,,censored
+p22,EDA (wrist),10.0,,censored
+p24,EDA (wrist),30.0,,censored
+p25,EDA (wrist),70.0,,censored
+p26,EDA (wrist),,,not_estimable
+p27,EDA (wrist),,,not_estimable
+p28,EDA (wrist),,,not_estimable
+p29,EDA (wrist),50.0,,censored
+p30,EDA (wrist),30.0,,censored
+p31,EDA (wrist),50.0,,censored
+p32,EDA (wrist),,,not_estimable
+p33,EDA (wrist),170.0,,censored
+p34,EDA (wrist),250.0,80.0,returned
+p35,EDA (wrist),,,not_estimable
+p36,EDA (wrist),90.0,,censored
+p37,EDA (wrist),50.0,,censored
+p01,motion (wrist),,,not_estimable
+p02,motion (wrist),10.0,30.0,returned
+p03,motion (wrist),10.0,,censored
+p04,motion (wrist),,,not_estimable
+p05,motion (wrist),10.0,60.0,returned
+p06,motion (wrist),10.0,60.0,returned
+p07,motion (wrist),,,not_estimable
+p08,motion (wrist),,,not_estimable
+p09,motion (wrist),230.0,40.0,returned
+p10,motion (wrist),270.0,30.0,returned
+p11,motion (wrist),,,not_estimable
+p12,motion (wrist),,,not_estimable
+p13,motion (wrist),,,not_estimable
+p15,motion (wrist),150.0,50.0,returned
+p16,motion (wrist),,,not_estimable
+p17,motion (wrist),20.0,,censored
+p18,motion (wrist),150.0,140.0,returned
+p19,motion (wrist),10.0,350.0,returned
+p20,motion (wrist),,,not_estimable
+p21,motion (wrist),,,not_estimable
+p22,motion (wrist),250.0,50.0,returned
+p24,motion (wrist),40.0,,censored
+p25,motion (wrist),,,not_estimable
+p26,motion (wrist),100.0,60.0,returned
+p27,motion (wrist),,,not_estimable
+p28,motion (wrist),,,not_estimable
+p29,motion (wrist),,,not_estimable
+p30,motion (wrist),50.0,50.0,returned
+p31,motion (wrist),20.0,190.0,returned
+p32,motion (wrist),220.0,,censored
+p33,motion (wrist),,,not_estimable
+p34,motion (wrist),280.0,,censored
+p35,motion (wrist),,,not_estimable
+p36,motion (wrist),,,not_estimable
+p37,motion (wrist),10.0,,censored
+p01,EEG frontal theta,,,not_estimable
+p02,EEG frontal theta,,,not_estimable
+p03,EEG frontal theta,,,not_estimable
+p04,EEG frontal theta,240.0,30.0,returned
+p05,EEG frontal theta,,,not_estimable
+p06,EEG frontal theta,,,not_estimable
+p07,EEG frontal theta,,,not_estimable
+p08,EEG frontal theta,,,not_estimable
+p09,EEG frontal theta,220.0,30.000000000000117,returned
+p10,EEG frontal theta,,,not_estimable
+p11,EEG frontal theta,,,not_estimable
+p12,EEG frontal theta,10.0,50.0,returned
+p13,EEG frontal theta,,,not_estimable
+p15,EEG frontal theta,,,not_estimable
+p16,EEG frontal theta,,,not_estimable
+p17,EEG frontal theta,,,not_estimable
+p18,EEG frontal theta,50.0,30.0,returned
+p19,EEG frontal theta,,,not_estimable
+p20,EEG frontal theta,,,ambiguous_timing
+p21,EEG frontal theta,,,not_estimable
+p22,EEG frontal theta,79.99999999999994,,censored
+p24,EEG frontal theta,,,not_estimable
+p25,EEG frontal theta,,,not_estimable
+p26,EEG frontal theta,,,not_estimable
+p27,EEG frontal theta,,,not_estimable
+p28,EEG frontal theta,,,ambiguous_timing
+p29,EEG frontal theta,,,not_estimable
+p30,EEG frontal theta,,,not_estimable
+p31,EEG frontal theta,,,not_estimable
+p32,EEG frontal theta,,,not_estimable
+p33,EEG frontal theta,,,not_estimable
+p34,EEG frontal theta,100.0,130.0,returned
+p35,EEG frontal theta,,,not_estimable
+p36,EEG frontal theta,,,not_estimable
+p37,EEG frontal theta,,,not_estimable
+p01,EEG parietal alpha,,,not_estimable
+p02,EEG parietal alpha,,,not_estimable
+p03,EEG parietal alpha,250.00000000000009,120.0,returned
+p04,EEG parietal alpha,,,not_estimable
+p05,EEG parietal alpha,,,not_estimable
+p06,EEG parietal alpha,319.99999999999994,40.0,returned
+p07,EEG parietal alpha,,,not_estimable
+p08,EEG parietal alpha,,,not_estimable
+p09,EEG parietal alpha,70.0,70.00000000000011,returned
+p10,EEG parietal alpha,210.0,30.0,returned
+p11,EEG parietal alpha,,,not_estimable
+p12,EEG parietal alpha,190.0,50.0,returned
+p13,EEG parietal alpha,,,not_estimable
+p15,EEG parietal alpha,,,not_estimable
+p16,EEG parietal alpha,,,not_estimable
+p17,EEG parietal alpha,,,not_estimable
+p18,EEG parietal alpha,,,not_estimable
+p19,EEG parietal alpha,190.0,150.0,returned
+p20,EEG parietal alpha,,,ambiguous_timing
+p21,EEG parietal alpha,290.0,50.0,returned
+p22,EEG parietal alpha,,,not_estimable
+p24,EEG parietal alpha,,,not_estimable
+p25,EEG parietal alpha,,,not_estimable
+p26,EEG parietal alpha,,,not_estimable
+p27,EEG parietal alpha,,,not_estimable
+p28,EEG parietal alpha,,,ambiguous_timing
+p29,EEG parietal alpha,,,not_estimable
+p30,EEG parietal alpha,,,not_estimable
+p31,EEG parietal alpha,,,not_estimable
+p32,EEG parietal alpha,,,not_estimable
+p33,EEG parietal alpha,,,not_estimable
+p34,EEG parietal alpha,,,not_estimable
+p35,EEG parietal alpha,,,not_estimable
+p36,EEG parietal alpha,,,not_estimable
+p37,EEG parietal alpha,,,not_estimable
+p01,EEG central beta,,,not_estimable
+p02,EEG central beta,50.0,30.0,returned
+p03,EEG central beta,80.00000000000006,,censored
+p04,EEG central beta,200.0,30.0,returned
+p05,EEG central beta,,,not_estimable
+p06,EEG central beta,259.99999999999994,40.0,returned
+p07,EEG central beta,,,not_estimable
+p08,EEG central beta,80.0,160.0,returned
+p09,EEG central beta,80.0,30.000000000000117,returned
+p10,EEG central beta,,,not_estimable
+p11,EEG central beta,,,not_estimable
+p12,EEG central beta,10.0,50.0,returned
+p13,EEG central beta,100.0,,censored
+p15,EEG central beta,,,not_estimable
+p16,EEG central beta,,,not_estimable
+p17,EEG central beta,310.0,70.0,returned
+p18,EEG central beta,,,not_estimable
+p19,EEG central beta,160.0,130.0,returned
+p20,EEG central beta,,,ambiguous_timing
+p21,EEG central beta,250.0,30.0,returned
+p22,EEG central beta,29.999999999999943,,censored
+p24,EEG central beta,250.0,180.0,returned
+p25,EEG central beta,,,not_estimable
+p26,EEG central beta,,,not_estimable
+p27,EEG central beta,,,not_estimable
+p28,EEG central beta,,,ambiguous_timing
+p29,EEG central beta,,,not_estimable
+p30,EEG central beta,,,not_estimable
+p31,EEG central beta,160.00000000000006,30.0,returned
+p32,EEG central beta,20.0,30.0,returned
+p33,EEG central beta,,,not_estimable
+p34,EEG central beta,170.0,70.0,returned
+p35,EEG central beta,,,not_estimable
+p36,EEG central beta,,,not_estimable
+p37,EEG central beta,,,not_estimable

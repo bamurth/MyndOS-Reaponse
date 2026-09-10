@@ -14,7 +14,7 @@ import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
 from myndos.metrics import robust_reference, normalize, burden, recovery, first_sustained_departure
 from myndos.modeling import nested_ridge_predict_fast as nested_ridge_predict, paired_bootstrap
 
-SEED = 0; ALPHAS = (0.1, 1.0, 10.0, 100.0, 1000.0); N_PERM = int(sys.argv[1]) if len(sys.argv) > 1 else 500; TARGET_REL = 0.10
+SEED = 0; ALPHAS = (0.1, 1.0, 10.0, 100.0, 1000.0); N_PERM = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 500; TARGET_REL = 0.10
 FLOOR = {"hr": 1.0, "eda": 0.02, "motion": 0.02, "temp": 0.05, "abs_err": 5.0}
 df = pd.read_parquet("data/features/matb_bins.parquet")
 R = pd.read_csv("results/tables/recovery_endpoints.csv")
@@ -73,9 +73,9 @@ def eeg_features(pid, cutoff):
     return out
 
 
-def build(cutoff=1080, sham_shift=0, hr_gate=0.5):
+def build(cutoff=1080, sham_shift=0, hr_gate=0.5, bins=None):
     rows = []
-    for pid, g in df.groupby("pid"):
+    for pid, g in (df if bins is None else bins).groupby("pid"):
         g = g[g.condition != "quiet_rest"].copy(); g["hr"] = np.where(g.ibi_cov >= hr_gate, g.hr_e4_raw, np.nan)
         f = {"pid": pid, **behaviour_features(g, cutoff)}
         s = sham_shift

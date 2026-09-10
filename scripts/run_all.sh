@@ -25,4 +25,7 @@ if [ ! -f data/raw/matb/SHA256SUMS.txt ]; then
 fi
 scripts/verify_matb.sh
 $PY scripts/matb_pipeline.py
-if [ -f data/raw/matb/EEGfNIRSeye_p1-p5/p01/p01.csv ]; then $PY scripts/matb_eeg.py; fi
+# EEG: one participant at a time (download, verify, features, delete raw): scripts/eeg_lane.sh LANE p01 p02 ...; then assemble
+if ls data/features/matb_eeg_bins_p*.parquet >/dev/null 2>&1; then $PY scripts/matb_eeg.py --cohort-only; fi
+$PY scripts/recovery_validity.py && $PY scripts/cross_modality_timing.py
+$PY scripts/primary_prediction.py 500   # participant-level primary experiment (configs/primary_experiment_frozen.md); ~40 min
