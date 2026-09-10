@@ -17,6 +17,12 @@ observed; `MANIFEST.md` lists sources, licenses and checksums.
   response/recovery metrics for both challenge cycles, block performance, the held-out added-value prediction test and
   figures `figM1`-`figM5` (see RESULTS.md section 0).
 
+## 2026-09-10 additions (participant-level primary experiment)
+* `configs/primary_experiment_frozen.md` (frozen before running), `scripts/recovery_validity.py` (endpoint validity + sensitivity, figures R1-R2),
+  `scripts/cross_modality_timing.py` (figure R3), `scripts/primary_prediction.py` (nested models A-F, controls, ablation, shortening curve,
+  figures P1-P3), `scripts/drivedb_recovery.py` (external ECG transfer test, figure X1), lanes for EEG (`scripts/eeg_lane.sh`).
+* Documents: RESULTS_SUMMARY.md, METHODS_AND_QC.md, CLAIMS_LEDGER.md, NEXT_EXPERIMENTS.md, REPLICATION_AND_ROADMAP.md.
+
 ## Reproduce
 ```sh
 python3 -m venv .venv && .venv/bin/pip install -r requirements.lock.txt
