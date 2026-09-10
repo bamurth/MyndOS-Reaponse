@@ -25,14 +25,14 @@
       "p": 0.7468095811474167
     },
     "theta_f_resp_vs_y_c2": {
-      "n": 21,
-      "partial_rho": -0.0961038961038961,
-      "p": 0.6785829571667291
+      "n": 35,
+      "partial_rho": -0.10504201680672269,
+      "p": 0.5481509355240088
     },
     "alpha_p_resp_vs_y_c2": {
-      "n": 21,
-      "partial_rho": 0.007792207792207793,
-      "p": 0.9732581834484768
+      "n": 35,
+      "partial_rho": 0.09607843137254903,
+      "p": 0.5829797449024886
     },
     "hr_resp_vs_y_r2_excess": {
       "n": 28,
@@ -80,18 +80,18 @@
         "return_median_s": 80.0
       },
       "eeg_frontal_theta": {
-        "returned": 1,
-        "censored": 0,
-        "not_estimable": 4,
-        "ambiguous": 0,
-        "return_median_s": 30.0
+        "returned": 5,
+        "censored": 1,
+        "not_estimable": 27,
+        "ambiguous": 2,
+        "return_median_s": 30.000000000000117
       },
       "eeg_parietal_alpha": {
-        "returned": 1,
+        "returned": 7,
         "censored": 0,
-        "not_estimable": 4,
-        "ambiguous": 0,
-        "return_median_s": 120.0
+        "not_estimable": 26,
+        "ambiguous": 2,
+        "return_median_s": 50.0
       }
     },
     "pairwise_return_time_spearman_both_returned": {
@@ -163,20 +163,20 @@
         "eda_return",
         "eda_censored"
       ],
-      "model_mae": 169.2779275246028,
-      "model_rmse": 207.25850353063728,
+      "model_mae": 169.27792752460292,
+      "model_rmse": 207.25850353063737,
       "model_spearman": 0.7268746579091406,
-      "model_r2_oof": 0.8261075297803614,
-      "ref_mae": 170.1658747926793,
-      "ref_rmse": 230.4037011755296,
+      "model_r2_oof": 0.8261075297803613,
+      "ref_mae": 170.16587479267918,
+      "ref_rmse": 230.4037011755292,
       "ref_spearman": 0.6699507389162561,
-      "ref_r2_oof": 0.7851007186290504,
-      "mae_diff_vs_ref": -0.8879472680765039,
-      "rel_mae_change_vs_ref": -0.0052181277189585155,
+      "ref_r2_oof": 0.7851007186290512,
+      "mae_diff_vs_ref": -0.8879472680763131,
+      "rel_mae_change_vs_ref": -0.0052181277189573974,
       "paired_bootstrap_mae_diff": {
-        "mean": -0.8879472680765039,
-        "ci_low": -38.993792660760185,
-        "ci_high": 36.90030284407183,
+        "mean": -0.8879472680763131,
+        "ci_low": -38.993792660759716,
+        "ci_high": 36.90030284407206,
         "n": 28,
         "frac_boot_below_zero": 0.5242
       },
@@ -242,8 +242,8 @@
         "p37": 140.88
       },
       "jackknife_mae_diff_range": [
-        -40.90413924608878,
-        1.9064560282403642
+        -40.904139246088846,
+        1.906456028240282
       ],
       "jackknife_most_influential": "p10"
     },
@@ -274,14 +274,14 @@
       "p": 0.99872579579922
     },
     "theta_f_burden_rc_vs_y_c2": {
-      "n": 21,
-      "partial_rho": 0.11948051948051949,
-      "p": 0.6059550557298753
+      "n": 35,
+      "partial_rho": 0.1546218487394958,
+      "p": 0.3751412007535049
     },
     "alpha_p_burden_rc_vs_y_c2": {
-      "n": 21,
-      "partial_rho": -0.05714285714285714,
-      "p": 0.8056609740932286
+      "n": 35,
+      "partial_rho": -0.08291316526610644,
+      "p": 0.6358399049551183
     },
     "C_plus_physio_residuals_vs_C": {
       "model": "C_plus_physio_residuals",
@@ -338,20 +338,20 @@
         "hr_burden_rc",
         "eda_burden_rc"
       ],
-      "model_mae": 153.63969203374057,
-      "model_rmse": 183.80425896165045,
+      "model_mae": 153.63969203374063,
+      "model_rmse": 183.80425896165042,
       "model_spearman": 0.7723043240284619,
-      "model_r2_oof": 0.8632374464000777,
-      "ref_mae": 170.1658747926793,
-      "ref_rmse": 230.4037011755296,
+      "model_r2_oof": 0.8632374464000778,
+      "ref_mae": 170.16587479267918,
+      "ref_rmse": 230.4037011755292,
       "ref_spearman": 0.6699507389162561,
-      "ref_r2_oof": 0.7851007186290504,
-      "mae_diff_vs_ref": -16.52618275893876,
-      "rel_mae_change_vs_ref": -0.09711807834016867,
+      "ref_r2_oof": 0.7851007186290512,
+      "mae_diff_vs_ref": -16.52618275893855,
+      "rel_mae_change_vs_ref": -0.0971180783401675,
       "paired_bootstrap_mae_diff": {
-        "mean": -16.52618275893876,
-        "ci_low": -61.02598025070581,
-        "ci_high": 25.493539660399925,
+        "mean": -16.52618275893855,
+        "ci_low": -61.02598025070555,
+        "ci_high": 25.493539660399733,
         "n": 28,
         "frac_boot_below_zero": 0.7868
       },
@@ -417,8 +417,8 @@
         "p37": 140.88
       },
       "jackknife_mae_diff_range": [
-        -39.338685835002465,
-        14.428402710783727
+        -39.33868583500256,
+        14.428402710783736
       ],
       "jackknife_most_influential": "p15"
     },

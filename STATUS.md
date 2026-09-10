@@ -1,5 +1,19 @@
 # STATUS
 
+## 2026-09-10 01:10 UTC — Participant-level primary experiment and full EEG cohort COMPLETE
+- EEG: 35/35 participants processed one at a time (three detached lanes, raw deleted after features; all SHA256 OK); two file layouts
+  handled; anchor rule made robust to a late press (p20) and unit-tested; 4 participants carry an ambiguous boundary (flagged).
+- Frozen plan `configs/primary_experiment_frozen.md` committed BEFORE running `scripts/primary_prediction.py`.
+- PRIMARY RESULT: behaviour-only model C predicts challenge-2 error with held-out MAE 170 (n = 28) / 164 (n = 35), Spearman 0.67-0.72;
+  adding wrist physiology, EEG or both makes it worse (+3 % to +54 %), permutation p >= 0.93, sham windows indistinguishable, no
+  influential-participant reversal. Frozen 10 % target NOT met. Behavioural carryover (recovery-1 excess -> challenge-2 error, partial rho 0.66)
+  is the strongest relationship. Details: RESULTS_SUMMARY.md, CLAIMS_LEDGER.md, METHODS_AND_QC.md, NEXT_EXPERIMENTS.md, REPLICATION_AND_ROADMAP.md.
+- Recovery validity: baseline drifts up within its block; end-of-recovery error stays above end-of-baseline; 12/35 right-censored; rankings
+  stable across definitions (`results/tables/recovery_validity.json`, `recovery_endpoints.csv`, figures R1-R3).
+- External transfer (drivedb, ECG, frozen endpoint): HR recovery estimable and uncensored in 9/9 eligible records (8 distinct); no behaviour.
+- Tests: 19 passing. Disk: 21 GB free. Fallback wake-ups cancelled after completion.
+
+
 ## 2026-09-09 22:35 UTC — PRIMARY dataset: Checkpoints 1 and 2 COMPLETE (wrist + behaviour N = 35; EEG N = 5)
 - physionet.org allowed by the network policy since this session; the site served an **expired Let's Encrypt certificate**
   (notAfter 2026-09-09 20:22:45 UTC; container clock checked against external HTTP Date headers). The owner authorised
