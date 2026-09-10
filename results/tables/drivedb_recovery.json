@@ -1,0 +1,83 @@
+{
+  "dataset": "drivedb 1.0.0 (PhysioNet AWS mirror; 37/37 SHA256 OK)",
+  "n_records": 18,
+  "n_eligible": 9,
+  "eligible_records": [
+    "drive02",
+    "drive04",
+    "drive05",
+    "drive08",
+    "drive10",
+    "drive11",
+    "drive12",
+    "drive13",
+    "drive14"
+  ],
+  "ineligible": [
+    {
+      "record": "drive01",
+      "reason": "no final-rest marker meeting the rule"
+    },
+    {
+      "record": "drive03",
+      "reason": "no final-rest marker meeting the rule"
+    },
+    {
+      "record": "drive06",
+      "reason": "no final-rest marker meeting the rule"
+    },
+    {
+      "record": "drive07",
+      "reason": "no final-rest marker meeting the rule"
+    },
+    {
+      "record": "drive09",
+      "reason": "no final-rest marker meeting the rule"
+    },
+    {
+      "record": "drive15",
+      "reason": "no final-rest marker meeting the rule"
+    },
+    {
+      "record": "drive16",
+      "reason": "no final-rest marker meeting the rule"
+    },
+    {
+      "record": "drive17a",
+      "reason": "no final-rest marker meeting the rule"
+    },
+    {
+      "record": "drive17b",
+      "reason": "no final-rest marker meeting the rule"
+    }
+  ],
+  "frozen_endpoint": "see docstring / REPLICATION_AND_ROADMAP.md",
+  "hr": {
+    "resp_bpm_median": 6.4821266041169,
+    "resp_bpm_iqr": [
+      6.18966475910544,
+      12.18335322019297
+    ],
+    "departed": 9,
+    "status": {
+      "returned": 9
+    },
+    "return_time_median_s": 50.0,
+    "residual_360_median_z": -0.24671584101054778,
+    "residual_end_median_z": 0.40892051021282017,
+    "hr_valid_bin_fraction_median": 1.0
+  },
+  "gsr": {
+    "resp_median": 6.239499999999998,
+    "departed": 7,
+    "status": {
+      "returned": 4,
+      "censored": 3,
+      "not_estimable": 2
+    },
+    "return_time_median_s": 345.0,
+    "residual_end_median_z": 4.667419196504532
+  },
+  "interpretation_limits": "no task performance; segment boundaries from a marker channel that is complete in only a minority of records; reference rest = minutes 5-15 by protocol (not marker-verified); transfer-to-another-task evidence for the recovery methodology only",
+  "note_duplicates": "drive13 and drive14 have identical markers, durations and every computed value: they appear to be the same recording released twice; effective N = 8 distinct drives."
+}
